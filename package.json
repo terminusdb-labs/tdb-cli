@@ -4,7 +4,14 @@
   "description": "A CLI tool for interaction with a remote TerminusDB",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "preinstall": "npm run build",
+    "build": "tsc",
+    "clean": "rm -rf ./dist",
+    "dev": "nodemon -e ts -w src -x 'npm run build'"
+
+  },
+  "bin": {
+    "tdb-cli": "dist/index.js"
   },
   "author": "Matthijs van Otterdijk",
   "license": "MIT",
@@ -25,6 +32,7 @@
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-n": "^16.1.0",
     "eslint-plugin-promise": "^6.1.1",
+    "nodemon": "^3.0.1",
     "typescript": "^5.2.2"
   }
 }
