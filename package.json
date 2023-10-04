@@ -2,17 +2,22 @@
   "name": "tdb-cli",
   "version": "1.0.0",
   "description": "A CLI tool for interaction with a remote TerminusDB",
+  "type":"module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Matthijs van Otterdijk",
   "license": "MIT",
   "dependencies": {
-    "@tsconfig/node18": "^18.2.2",
-    "command-line-arguments": "^1.1.1",
+    "@types/superagent": "^4.1.19",
+    "command-line-args": "^5.2.1",
+    "command-line-usage": "^7.0.1",
     "superagent": "^8.1.2"
   },
   "devDependencies": {
+    "@tsconfig/node18": "^18.2.2",
+    "@types/command-line-args": "^5.2.1",
+    "@types/command-line-usage": "^5.0.2",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "eslint": "^8.50.0",
     "eslint-config-standard-with-typescript": "^39.1.0",
