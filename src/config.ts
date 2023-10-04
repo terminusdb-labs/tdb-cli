@@ -48,7 +48,6 @@ export default {
     if (args.username !== undefined && args.password !== undefined) {
       auth = { type: 'basic', username: args.username, password: args.password }
     } else if (args.token !== undefined) {
-      console.log('got me a token')
       auth = { type: 'token', token: args.token }
     }
     const endpoint = args.server ?? orig?.endpoint ?? null
