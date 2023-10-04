@@ -111,7 +111,7 @@ export default async function getDoc (client: Client, argv: string[]): Promise<v
     requestOptions.graph_type = options.graph_type
   }
   if (options.skip !== undefined) {
-    requestoptions.skip = options.skip
+    requestOptions.skip = options.skip
   }
   if (options.count !== undefined) {
     requestOptions.count = options.count
