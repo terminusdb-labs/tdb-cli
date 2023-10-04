@@ -2,7 +2,7 @@
   "name": "tdb-cli",
   "version": "1.0.0",
   "description": "A CLI tool for interaction with a remote TerminusDB",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/superagent": "^4.1.19",
+    "axios": "^1.5.1",
     "command-line-args": "^5.2.1",
     "command-line-usage": "^7.0.1",
     "superagent": "^8.1.2"

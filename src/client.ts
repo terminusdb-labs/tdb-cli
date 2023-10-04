@@ -38,33 +38,33 @@ export default class Client {
     return `${this.serverUrl}/${path}`
   }
 
-  async get (path: string): Promise<superagent.Response> {
+  get (path: string): superagent.SuperAgentRequest {
     const url = this.url(path)
-    return await superagent.get(url)
+    return superagent.get(url)
       .set('Authorization', authHeader(this.auth))
   }
 
-  async post (path: string): Promise<superagent.Response> {
+  post (path: string): superagent.SuperAgentRequest {
     const url = this.url(path)
-    return await superagent.post(url)
+    return superagent.post(url)
       .set('Authorization', authHeader(this.auth))
   }
 
   async put (path: string): Promise<superagent.Response> {
     const url = this.url(path)
-    return await superagent.put(url)
+    return superagent.put(url)
       .set('Authorization', authHeader(this.auth))
   }
 
   async delete (path: string): Promise<superagent.Response> {
     const url = this.url(path)
-    return await superagent.delete(url)
+    return superagent.delete(url)
       .set('Authorization', authHeader(this.auth))
   }
 
   async patch (path: string): Promise<superagent.Response> {
     const url = this.url(path)
-    return await superagent.patch(url)
+    return superagent.patch(url)
       .set('Authorization', authHeader(this.auth))
   }
 }
