@@ -4,9 +4,7 @@ import commandLineUsage from 'command-line-usage'
 import getDoc from './getDoc.js'
 import type Client from '../client.js'
 
-const optionDefinitions = [
-  { name: 'command', defaultOption: true },
-]
+const optionDefinitions = [{ name: 'command', defaultOption: true }]
 
 const commands = [
   { name: 'get', summary: 'Retrieve documents.' },
@@ -27,13 +25,19 @@ const sections = [
   },
 ]
 
-function generateUsage (): void {
+function generateUsage(): void {
   const usage = commandLineUsage(sections)
   console.log(usage)
 }
 
-export default async function handle (client: Client, argv: string[]): Promise<void> {
-  const options = commandLineArgs(optionDefinitions, { argv, stopAtFirstUnknown: true })
+export default async function handle(
+  client: Client,
+  argv: string[],
+): Promise<void> {
+  const options = commandLineArgs(optionDefinitions, {
+    argv,
+    stopAtFirstUnknown: true,
+  })
   if (options.command === 'get') {
     await getDoc(client, options._unknown ?? [])
   } else {

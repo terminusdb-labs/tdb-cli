@@ -83,9 +83,11 @@ interface GetOptions {
 const sections = [
   {
     header: 'TerminusDB Document GET',
-    content: ['Get documents from TerminusDB',
+    content: [
+      'Get documents from TerminusDB',
       '',
-      'usage: tdb-cli doc get [options] <resource path>'],
+      'usage: tdb-cli doc get [options] <resource path>',
+    ],
   },
   {
     header: 'Options',
@@ -94,18 +96,24 @@ const sections = [
   },
 ]
 
-function generateUsage (): void {
+function generateUsage(): void {
   const usage = commandLineUsage(sections)
   console.log(usage)
 }
 
-export default async function getDoc (client: Client, argv: string[]): Promise<void> {
+export default async function getDoc(
+  client: Client,
+  argv: string[],
+): Promise<void> {
   const options = commandLineArgs(optionDefinitions, { argv }) as GetOptions
   if (options.help) {
-    generateUsage(); return
+    generateUsage()
+    return
   }
 
-  const request = client.post(`api/document/${options.resource}`).set('X-HTTP-Method-Override', 'GET')
+  const request = client
+    .post(`api/document/${options.resource}`)
+    .set('X-HTTP-Method-Override', 'GET')
   const requestOptions: any = {}
   if (options.graph_type !== undefined) {
     requestOptions.graph_type = options.graph_type
@@ -148,6 +156,5 @@ export default async function getDoc (client: Client, argv: string[]): Promise<v
     requestOptions.ids = lines
   }
 
-  request.send(requestOptions)
-    .pipe(process.stdout)
+  request.send(requestOptions).pipe(process.stdout)
 }

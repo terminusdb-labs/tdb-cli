@@ -41,13 +41,17 @@ const sections = [
   },
 ]
 
-function generateUsage (): void {
+function generateUsage(): void {
   const usage = commandLineUsage(sections)
   console.log(usage)
 }
 
 const options = commandLineArgs(optionDefinitions, { stopAtFirstUnknown: true })
-const client = new Client(options.server ?? 'http://127.0.0.1:6363', { type: 'basic', username: options.username ?? 'admin', password: options.password ?? 'root' })
+const client = new Client(options.server ?? 'http://127.0.0.1:6363', {
+  type: 'basic',
+  username: options.username ?? 'admin',
+  password: options.password ?? 'root',
+})
 if (options.command === 'doc') {
   await doc(client, options._unknown ?? [])
 } else {

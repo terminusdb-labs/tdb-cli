@@ -3,7 +3,7 @@ module.exports = {
         "browser": true,
         "es2021": true
     },
-    "extends": "standard-with-typescript",
+    "extends": ["standard-with-typescript", "prettier"],
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module"
@@ -12,6 +12,8 @@ module.exports = {
         ".eslintrc.cjs"
     ],
     "rules": {
-        "@typescript-eslint/comma-dangle": ["error", "always-multiline"]
-    }
+      "@typescript-eslint/comma-dangle": ["error", "always-multiline"],
+      "prettier/prettier": "error"
+    },
+    "plugins": [ "prettier" ]
 }
