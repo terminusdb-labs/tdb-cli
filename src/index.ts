@@ -8,38 +8,37 @@ const optionDefinitions = [
   { name: 'command', defaultOption: true },
   {
     name: 'server',
-    type: String
+    type: String,
   },
   {
     name: 'username',
-    type: String
+    type: String,
   },
   {
     name: 'password',
-    type: String
+    type: String,
   },
 ]
 
 const commands = [
   { name: 'help', summary: 'Display help information.' },
-  { name: 'doc', summary: 'Interact with documents.' }
+  { name: 'doc', summary: 'Interact with documents.' },
 ]
 
 const sections = [
   {
     header: 'TerminusDB CLI',
-    content: 'Interact with a remote TerminusDB instance.'
+    content: 'Interact with a remote TerminusDB instance.',
   },
   {
     header: 'Common Options',
     optionList: optionDefinitions,
-    hide: ['command']
-
+    hide: ['command'],
   },
   {
     header: 'Command List',
-    content: commands
-  }
+    content: commands,
+  },
 ]
 
 function generateUsage (): void {
@@ -48,7 +47,7 @@ function generateUsage (): void {
 }
 
 const options = commandLineArgs(optionDefinitions, { stopAtFirstUnknown: true })
-const client = new Client(options.server??'http://127.0.0.1:6363', { type: 'basic', username: options.username??'admin', password: options.password??'root' })
+const client = new Client(options.server ?? 'http://127.0.0.1:6363', { type: 'basic', username: options.username ?? 'admin', password: options.password ?? 'root' })
 if (options.command === 'doc') {
   await doc(client, options._unknown ?? [])
 } else {

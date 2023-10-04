@@ -2,10 +2,10 @@ import commandLineArgs from 'command-line-args'
 import commandLineUsage from 'command-line-usage'
 
 import getDoc from './getDoc.js'
-import Client from '../client.js'
+import type Client from '../client.js'
 
 const optionDefinitions = [
-  { name: 'command', defaultOption: true }
+  { name: 'command', defaultOption: true },
 ]
 
 const commands = [
@@ -13,18 +13,18 @@ const commands = [
   { name: 'insert', summary: 'Insert documents.' },
   { name: 'replace', summary: 'Replace documents.' },
   { name: 'delete', summary: 'Delete documents.' },
-  { name: 'help', summary: 'Show help.' }
+  { name: 'help', summary: 'Show help.' },
 ]
 
 const sections = [
   {
     header: 'TerminusDB Document API',
-    content: 'Get, insert, replace and delete documents from TerminusDB'
+    content: 'Get, insert, replace and delete documents from TerminusDB',
   },
   {
     header: 'Command List',
-    content: commands
-  }
+    content: commands,
+  },
 ]
 
 function generateUsage (): void {
