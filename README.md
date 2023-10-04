@@ -30,4 +30,4 @@ To continuously rebuild the CLI tool whenever changes are made to the typescript
 npm run dev
 ```
 
-Starts a nodemon so that every time a typescript file is modified this will rerun `tsc` producing a new build. If you previously installed from directory, this will keep the binary in sync with the source.
+This will start a process which incrementally rebuilds typescript code as files get edited. If you previously installed from directory, this will keep the binary in sync with the source.

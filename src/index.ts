@@ -20,7 +20,6 @@ const optionDefinitions = [
     type: String,
   },
 ]
-
 const commands = [
   { name: 'help', summary: 'Display help information.' },
   { name: 'doc', summary: 'Interact with documents.' },

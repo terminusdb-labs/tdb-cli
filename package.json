@@ -7,7 +7,7 @@
     "preinstall": "npm run build",
     "build": "tsc",
     "clean": "rm -rf ./dist",
-    "dev": "tsc-watch"
+    "dev": "tsc -w"
   },
   "bin": {
     "tdb-cli": "dist/index.js"
@@ -15,8 +15,6 @@
   "author": "Matthijs van Otterdijk",
   "license": "MIT",
   "dependencies": {
-    "@types/superagent": "^4.1.19",
-    "axios": "^1.5.1",
     "command-line-args": "^5.2.1",
     "command-line-usage": "^7.0.1",
     "superagent": "^8.1.2"
@@ -25,13 +23,13 @@
     "@tsconfig/node18": "^18.2.2",
     "@types/command-line-args": "^5.2.1",
     "@types/command-line-usage": "^5.0.2",
+    "@types/superagent": "^4.1.19",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "eslint": "^8.50.0",
     "eslint-config-standard-with-typescript": "^39.1.0",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-n": "^16.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "tsc-watch": "^6.0.4",
     "typescript": "^5.2.2"
   }
 }
