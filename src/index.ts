@@ -4,6 +4,8 @@ import commandLineUsage from 'command-line-usage'
 
 import doc from './doc/index.js'
 import Client from './client.js'
+import Config from './config.js'
+import { type CliArgs } from './config.js'
 
 const optionDefinitions = [
   { name: 'command', defaultOption: true },
@@ -17,6 +19,14 @@ const optionDefinitions = [
   },
   {
     name: 'password',
+    type: String,
+  },
+  {
+    name: 'token',
+    type: String,
+  },
+  {
+    name: 'context',
     type: String,
   },
 ]
@@ -47,11 +57,12 @@ function generateUsage(): void {
 }
 
 const options = commandLineArgs(optionDefinitions, { stopAtFirstUnknown: true })
-const client = new Client(options.server ?? 'http://127.0.0.1:6363', {
-  type: 'basic',
-  username: options.username ?? 'admin',
-  password: options.password ?? 'root',
-})
+const conf = Config.defaultContext(options as CliArgs)
+if (conf === null) {
+  console.error('no config available')
+  process.exit(1)
+}
+const client = new Client(conf.endpoint, conf.credentials)
 if (options.command === 'doc') {
   await doc(client, options._unknown ?? [])
 } else {

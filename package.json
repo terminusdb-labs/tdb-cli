@@ -17,12 +17,14 @@
   "dependencies": {
     "command-line-args": "^5.2.1",
     "command-line-usage": "^7.0.1",
+    "js-yaml": "^4.1.0",
     "superagent": "^8.1.2"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
     "@types/command-line-args": "^5.2.1",
     "@types/command-line-usage": "^5.0.2",
+    "@types/js-yaml": "^4.0.6",
     "@types/superagent": "^4.1.19",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "eslint": "^8.50.0",
