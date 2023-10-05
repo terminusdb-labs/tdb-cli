@@ -109,8 +109,11 @@ export default {
     const context = c.contexts[name]
     if (context !== undefined) {
       const credentials = c.credentials[context.credentials]
-      const endpoint = c.endpoints[context.endpoint]
+      let endpoint = c.endpoints[context.endpoint]
       if (credentials !== undefined && endpoint !== undefined) {
+        if (context.team !== undefined) {
+          endpoint = `${endpoint}/${context.team}`
+        }
         return {
           endpoint,
           credentials,
