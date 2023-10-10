@@ -9,7 +9,6 @@ import { setClient } from './state.js'
 
 program
   .enablePositionalOptions(true)
-  .addHelpText('after', 'wahoo')
   .option('-s, --server <serverUrl>', 'TerminusDB endpoint')
   .option('-u, --username <username>', 'Username (for authentication)')
   .option('-p, --password <password>', 'Password (for authentication)')
