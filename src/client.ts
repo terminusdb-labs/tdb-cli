@@ -38,6 +38,10 @@ export default class Client {
     return `${this.serverUrl}/${path}`
   }
 
+  header(): string {
+    return authHeader(this.auth)
+  }
+
   // eslint-disable-next-line @typescript-eslint/promise-function-async
   get(path: string): superagent.SuperAgentRequest {
     const url = this.url(path)
