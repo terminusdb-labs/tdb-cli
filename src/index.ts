@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { program } from '@commander-js/extra-typings'
 
-import * as doc from './doc/index.js'
+import doc from './doc/index.js'
 import Client from './client.js'
 import Config from './config.js'
 import { setClient } from './state.js'
@@ -22,5 +22,5 @@ program
     }
     setClient(new Client(conf.endpoint, conf.credentials))
   })
-  .addCommand(doc.command('doc'))
+  .addCommand(doc)
 await program.parseAsync()

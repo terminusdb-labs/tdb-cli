@@ -1,6 +1,5 @@
 import { Command } from '@commander-js/extra-typings'
 import getDoc from './getDoc.js'
 
-export function command(name: string): Command {
-  return new Command().name(name).addCommand(getDoc)
-}
+const command = new Command().name('doc').addCommand(getDoc)
+export default command
