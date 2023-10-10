@@ -24,11 +24,11 @@ interface RuntimeContext {
 }
 
 export interface CliArgs {
-  server: string | undefined
-  username: string | undefined
-  password: string | undefined
-  token: string | undefined
-  context: string | undefined
+  server?: string | undefined
+  username?: string | undefined
+  password?: string | undefined
+  token?: string | undefined
+  context?: string | undefined
 }
 
 export default {

@@ -16,8 +16,8 @@
   "author": "Matthijs van Otterdijk",
   "license": "MIT",
   "dependencies": {
-    "command-line-args": "^5.2.1",
-    "command-line-usage": "^7.0.1",
+    "@commander-js/extra-typings": "^11.0.0",
+    "commander": "^11.0.0",
     "js-yaml": "^4.1.0",
     "superagent": "^8.1.2"
   },
