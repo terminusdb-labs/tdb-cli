@@ -22,7 +22,7 @@ async function getSchema(resource: string | undefined): Promise<void> {
 
 const command = new Command()
   .name('get-schema')
-  .argument('<resource>')
+  .argument('[resource]')
   .action(getSchema)
 
 export default command
