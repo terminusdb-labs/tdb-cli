@@ -21,6 +21,7 @@ async function getSchema(resource: string | undefined): Promise<void> {
 
 const command = new Command()
   .name('get-schema')
+  .description('Print the GraphQL schema for the given resource in SDL format')
   .argument('[resource]')
   .action(getSchema)
 

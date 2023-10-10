@@ -9,11 +9,15 @@ import { setClient } from './state.js'
 
 program
   .enablePositionalOptions(true)
-  .option('-s, --server <serverUrl>')
-  .option('-u, --username <username>')
-  .option('-p, --password <password>')
-  .option('-t, --token <token>')
-  .option('-c, --context <context>')
+  .addHelpText('after', 'wahoo')
+  .option('-s, --server <serverUrl>', 'TerminusDB endpoint')
+  .option('-u, --username <username>', 'Username (for authentication)')
+  .option('-p, --password <password>', 'Password (for authentication)')
+  .option('-t, --token <token>', 'Token (for authentication)')
+  .option(
+    '-c, --context <context>',
+    'Which context from the configuration to use',
+  )
   .hook('preAction', (command) => {
     const opts = command.opts()
     const conf = Config.defaultContext(opts)

@@ -28,8 +28,8 @@ async function serve(
   })
 
   const port = await getPort({ port: opts.port })
-  app.listen(port)
-  const localResource = '/' + resource ?? ''
+  app.listen(port, 'localhost')
+  const localResource = '/' + (resource ?? '')
   console.log(
     `Hosting a GraphiQL endpoint at http://localhost:${port}${localResource}`,
   )
@@ -40,9 +40,13 @@ async function serve(
 
 const command = new Command()
   .name('serve')
+  .description('Set up a GraphiQL instance on a localhost endpoint')
   .argument('[resource]')
-  .option('-p, --port <port>', 'The port to host graphiql on', parseInt, 3003)
-  .option('-o, --open', 'Open a browser')
+  .option('-p, --port <port>', 'The port to host GraphiQL on', parseInt, 3003)
+  .option(
+    '-o, --open',
+    'automatically open the GraphiQL endpoint in a browser window',
+  )
   .action(serve)
 
 export default command
