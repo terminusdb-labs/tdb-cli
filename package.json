@@ -18,6 +18,7 @@
   "dependencies": {
     "@commander-js/extra-typings": "^11.0.0",
     "commander": "^11.0.0",
+    "graphql": "^16.8.1",
     "js-yaml": "^4.1.0",
     "superagent": "^8.1.2"
   },

@@ -2,6 +2,7 @@
 import { program } from '@commander-js/extra-typings'
 
 import doc from './doc/index.js'
+import graphql from './graphql/index.js'
 import Client from './client.js'
 import Config from './config.js'
 import { setClient } from './state.js'
@@ -23,4 +24,5 @@ program
     setClient(new Client(conf.endpoint, conf.credentials))
   })
   .addCommand(doc)
+  .addCommand(graphql)
 await program.parseAsync()
