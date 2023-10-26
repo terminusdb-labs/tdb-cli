@@ -3,20 +3,13 @@ import { program } from '@commander-js/extra-typings'
 
 import doc from './doc/index.js'
 import graphql from './graphql/index.js'
+import curl from './curl.js'
 import Client from './client.js'
 import Config from './config.js'
 import { setClient } from './state.js'
 
 program
   .enablePositionalOptions(true)
-  .option('-s, --server <serverUrl>', 'TerminusDB endpoint')
-  .option('-u, --username <username>', 'Username (for authentication)')
-  .option('-p, --password <password>', 'Password (for authentication)')
-  .option('-t, --token <token>', 'Token (for authentication)')
-  .option(
-    '-c, --context <context>',
-    'Which context from the configuration to use',
-  )
   .hook('preAction', (command) => {
     const opts = command.opts()
     const conf = Config.defaultContext(opts)
@@ -26,6 +19,15 @@ program
     }
     setClient(new Client(conf.endpoint, conf.credentials))
   })
+  .option('-s, --server <serverUrl>', 'TerminusDB endpoint')
+  .option('-u, --username <username>', 'Username (for authentication)')
+  .option('-p, --password <password>', 'Password (for authentication)')
+  .option('-t, --token <token>', 'Token (for authentication)')
+  .option(
+    '-c, --context <context>',
+    'Which context from the configuration to use',
+  )
   .addCommand(doc)
   .addCommand(graphql)
+  .addCommand(curl)
 await program.parseAsync()
