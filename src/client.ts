@@ -9,9 +9,13 @@ export interface TokenAuth {
   token: string
 }
 
-export type Auth = BasicAuth | TokenAuth
+export interface AnonymousAuth {
+  type: 'anonymous'
+}
 
-function authHeader(auth: Auth): string {
+export type Auth = BasicAuth | TokenAuth | AnonymousAuth
+
+function authHeader(auth: Auth): string | null {
   switch (auth.type) {
     case 'basic': {
       const decoded = `${auth.username}:${auth.password}`
@@ -21,6 +25,9 @@ function authHeader(auth: Auth): string {
     }
     case 'token': {
       return `Token ${auth.token}`
+    }
+    case 'anonymous': {
+      return null
     }
   }
 }
@@ -38,37 +45,67 @@ export default class Client {
     return `${this.serverUrl}/${path}`
   }
 
-  header(): string {
+  header(): string | null {
     return authHeader(this.auth)
   }
 
   // eslint-disable-next-line @typescript-eslint/promise-function-async
   get(path: string): superagent.SuperAgentRequest {
     const url = this.url(path)
-    return superagent.get(url).set('Authorization', authHeader(this.auth))
+    const header = this.header()
+    let request = superagent.get(url)
+    if (header !== null) {
+      request = request.set('Authorization', header)
+    }
+
+    return request
   }
 
   // eslint-disable-next-line @typescript-eslint/promise-function-async
   post(path: string): superagent.SuperAgentRequest {
     const url = this.url(path)
-    return superagent.post(url).set('Authorization', authHeader(this.auth))
+    const header = this.header()
+    let request = superagent.post(url)
+    if (header !== null) {
+      request = request.set('Authorization', header)
+    }
+
+    return request
   }
 
   // eslint-disable-next-line @typescript-eslint/promise-function-async
   put(path: string): superagent.SuperAgentRequest {
     const url = this.url(path)
-    return superagent.put(url).set('Authorization', authHeader(this.auth))
+    const header = this.header()
+    let request = superagent.put(url)
+    if (header !== null) {
+      request = request.set('Authorization', header)
+    }
+
+    return request
   }
 
   // eslint-disable-next-line @typescript-eslint/promise-function-async
   delete(path: string): superagent.SuperAgentRequest {
     const url = this.url(path)
-    return superagent.delete(url).set('Authorization', authHeader(this.auth))
+    const header = this.header()
+    let request = superagent.delete(url)
+    if (header !== null) {
+      request = request.set('Authorization', header)
+    }
+
+    return request
   }
 
   // eslint-disable-next-line @typescript-eslint/promise-function-async
   patch(path: string): superagent.SuperAgentRequest {
     const url = this.url(path)
-    return superagent.patch(url).set('Authorization', authHeader(this.auth))
+    const header = this.header()
+    let request = superagent.patch(url)
+    if (header !== null) {
+      request = request.set('Authorization', header)
+    }
+
+    return request
   }
 }

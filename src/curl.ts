@@ -23,9 +23,14 @@ If you wish to see what curl command will be run by this command, instead of act
     const client = getClient()
     const url = client.url(api)
     const auth = client.header()
-    const c = `curl -H "Authorization: ${auth}" "${url}" ${args.join(
-      ' ',
-    )}`.trimEnd()
+    let authCliPart
+    if (auth === null) {
+      authCliPart = ''
+    } else {
+      authCliPart = `-H "Authorization: ${auth}" `
+    }
+
+    const c = `curl ${authCliPart}"${url}" ${args.join(' ')}`.trimEnd()
 
     if (options.echo === true) {
       console.log(c)
