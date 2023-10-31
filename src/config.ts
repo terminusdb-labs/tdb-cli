@@ -108,14 +108,12 @@ export default {
     const c = config()
     const context = c.contexts[name]
     if (context !== undefined) {
-      console.log(context.credentials)
       let credentials: Auth
       if (context.credentials === 'anonymous') {
         credentials = { type: 'anonymous' }
       } else {
         credentials = c.credentials[context.credentials]
       }
-      console.log(credentials)
       let endpoint = c.endpoints[context.endpoint]
       if (credentials !== undefined && endpoint !== undefined) {
         if (context.team !== undefined) {

@@ -13,18 +13,31 @@ export interface AnonymousAuth {
   type: 'anonymous'
 }
 
-export type Auth = BasicAuth | TokenAuth | AnonymousAuth
+export interface ForwardAuth {
+  type: 'forwarded'
+  username: string
+}
 
-function authHeader(auth: Auth): string | null {
+export type Auth = BasicAuth | TokenAuth | AnonymousAuth | ForwardAuth
+
+export interface AuthHeader {
+  header: 'Authorization' | 'X-User-Forward'
+  content: string
+}
+
+function authHeader(auth: Auth): AuthHeader | null {
   switch (auth.type) {
     case 'basic': {
       const decoded = `${auth.username}:${auth.password}`
       const buf = Buffer.from(decoded)
       const encoded = buf.toString('base64')
-      return `Basic ${encoded}`
+      return { header: 'Authorization', content: `Basic ${encoded}` }
     }
     case 'token': {
-      return `Token ${auth.token}`
+      return { header: 'Authorization', content: `Token ${auth.token}` }
+    }
+    case 'forwarded': {
+      return { header: 'X-User-Forward', content: auth.username }
     }
     case 'anonymous': {
       return null
@@ -45,7 +58,7 @@ export default class Client {
     return `${this.serverUrl}/${path}`
   }
 
-  header(): string | null {
+  header(): AuthHeader | null {
     return authHeader(this.auth)
   }
 
@@ -55,7 +68,7 @@ export default class Client {
     const header = this.header()
     let request = superagent.get(url)
     if (header !== null) {
-      request = request.set('Authorization', header)
+      request = request.set(header.header, header.content)
     }
 
     return request
@@ -67,7 +80,7 @@ export default class Client {
     const header = this.header()
     let request = superagent.post(url)
     if (header !== null) {
-      request = request.set('Authorization', header)
+      request = request.set(header.header, header.content)
     }
 
     return request
@@ -79,7 +92,7 @@ export default class Client {
     const header = this.header()
     let request = superagent.put(url)
     if (header !== null) {
-      request = request.set('Authorization', header)
+      request = request.set(header.header, header.content)
     }
 
     return request
@@ -91,7 +104,7 @@ export default class Client {
     const header = this.header()
     let request = superagent.delete(url)
     if (header !== null) {
-      request = request.set('Authorization', header)
+      request = request.set(header.header, header.content)
     }
 
     return request
@@ -103,7 +116,7 @@ export default class Client {
     const header = this.header()
     let request = superagent.patch(url)
     if (header !== null) {
-      request = request.set('Authorization', header)
+      request = request.set(header.header, header.content)
     }
 
     return request

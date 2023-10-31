@@ -27,7 +27,7 @@ If you wish to see what curl command will be run by this command, instead of act
     if (auth === null) {
       authCliPart = ''
     } else {
-      authCliPart = `-H "Authorization: ${auth}" `
+      authCliPart = `-H "${auth.header}: ${auth.content}" `
     }
 
     const c = `curl ${authCliPart}"${url}" ${args.join(' ')}`.trimEnd()
