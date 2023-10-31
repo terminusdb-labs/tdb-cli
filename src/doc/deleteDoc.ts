@@ -2,8 +2,8 @@ import { Command, Option } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
 
 const command = new Command()
-  .name('insert')
-  .description('Insert documents')
+  .name('delete')
+  .description('Delete documents')
   .argument('<resource>')
   .addOption(
     new Option('-g, --graph_type <graphType>')
@@ -17,11 +17,6 @@ const command = new Command()
     'Mutation through the command line interface',
   )
   .option(
-    '-f, --full-replace',
-    'delete all previous documents and substitute these',
-    false,
-  )
-  .option(
     '-r, --require-migration',
     'If this is a schema change, require an inferred migration',
     false,
@@ -31,40 +26,28 @@ const command = new Command()
     'If this is a schema change, allow inferred migration to be destructive',
     false,
   )
-  .option('-j, --raw-json', 'insert documents as raw json', false)
-  .option(
-    '-s, --merge-repeats',
-    'merge repeated documents into a single document record',
-    false,
-  )
-  .option(
-    '-d, --data <data>',
-    'data to submit. This can be a string with a single json document, several documents, or a list of documents. If absent, data is read from STDIN.',
-  )
+  .option('-i, --id <id>', 'The id of the document to delete')
+  // the server cli tool has a weird data flag too? what is that about
+  .option('-n, --nuke', 'remove all documents from the graph')
   .action(async (resource, options) => {
     let request = getClient()
-      .post(`api/document/${resource}`)
+      .delete(`api/document/${resource}`)
       .set('Content-Type', 'application/json')
       .query({
         author: options.author,
         message: options.message,
         graph_type: options.graph_type,
-        full_replace: options.fullReplace,
-        raw_json: options.rawJson,
         require_migration: options.requireMigration,
         allow_destructive_migration: options.allowDestructiveMigration,
-        merge_repeats: options.mergeRepeats,
       })
-    if (options.data !== undefined) {
-      request.send(options.data).pipe(process.stdout)
-    } else {
-      // this code is super annoying cause it's not properly streaming.
-      // the documentation for superagent implies we should be able to pipe directly but I've not been able to get this to work.
-      for await (const chunk of process.stdin) {
-        request = request.send(chunk.toString())
-      }
-      request.pipe(process.stdout)
+    if (options.id !== undefined) {
+      request = request.query({ id: options.id })
     }
+    if (options.nuke !== undefined) {
+      request = request.query({ nuke: true })
+    }
+    // todo probably something about list of ids that can come from an argument or stdin
+    request.pipe(process.stdout)
   })
 
 export default command
