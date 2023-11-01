@@ -7,6 +7,7 @@ import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import open from 'open'
 import getPort from 'get-port'
+import resource from '../resource.js'
 const dir = dirname(fileURLToPath(import.meta.url))
 const template = await readFile(dir + '/../../assets/graphiql.tpl', 'utf8')
 
@@ -41,7 +42,7 @@ async function serve(
 const command = new Command()
   .name('serve')
   .description('Set up a GraphiQL instance on a localhost endpoint')
-  .argument('[resource]')
+  .argument('[resource]', 'the resource to work with', resource)
   .option('-p, --port <port>', 'The port to host GraphiQL on', parseInt, 3003)
   .option(
     '-o, --open',

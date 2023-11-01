@@ -57,7 +57,7 @@
           fetcher: GraphiQL.createFetcher({
             url: "{{{url}}}"
           }),
-          headers: '{"Authorization": "{{{auth}}}"}',
+          headers: '{"{{{auth.header}}}": "{{{auth.content}}}"}',
           defaultEditorToolsVisibility: true,
         }),
         document.getElementById('graphiql'),
