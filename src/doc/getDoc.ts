@@ -1,11 +1,12 @@
 import readLine from 'readline'
 import { Command, Option } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
+import resource from '../resource.js'
 
 const command = new Command()
   .name('get')
   .description('Retrieve documents')
-  .argument('<resource>')
+  .argument('<resource>', 'the resource to work with', resource)
   .addOption(
     new Option('-g, --graph_type <graphType>')
       .choices(['schema', 'instance'])

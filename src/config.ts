@@ -21,14 +21,16 @@ function config(): any {
 interface RuntimeContext {
   endpoint: string
   credentials: Auth
+  organization?: string
 }
 
 export interface CliArgs {
-  server?: string | undefined
-  username?: string | undefined
-  password?: string | undefined
-  token?: string | undefined
-  context?: string | undefined
+  server?: string
+  username?: string
+  password?: string
+  token?: string
+  context?: string
+  organization?: string
 }
 
 export default {
@@ -51,16 +53,20 @@ export default {
       auth = { type: 'token', token: args.token }
     }
     const endpoint = args.server ?? orig?.endpoint ?? null
-    if (auth !== null && endpoint !== null) {
+    const organization = args.organization
+
+    if (auth !== null && endpoint !== null && organization !== null) {
       return {
         endpoint,
         credentials: auth,
+        organization,
       }
     }
-    if (orig !== null && (auth !== null || endpoint !== null)) {
+    if (orig !== null) {
       return {
         endpoint: endpoint ?? orig.endpoint,
         credentials: auth ?? orig.credentials,
+        organization,
       }
     }
 
@@ -73,6 +79,7 @@ export default {
     const tdbPassword = process.env.TDB_PASSWORD
     const tdbToken = process.env.TDB_TOKEN
     const tdbServer = process.env.TDB_SERVER
+    const tdbOrganization = process.env.TDB_ORGANIZATION
     if (tdbUser !== undefined && tdbPassword !== undefined) {
       auth = { type: 'basic', username: tdbUser, password: tdbPassword }
     } else if (tdbToken !== undefined) {
@@ -82,12 +89,14 @@ export default {
       return {
         endpoint: tdbServer,
         credentials: auth,
+        organization: tdbOrganization,
       }
     }
     if (orig !== null && (auth !== null || tdbServer !== undefined)) {
       return {
         endpoint: tdbServer ?? orig.endpoint,
         credentials: auth ?? orig.credentials,
+        organization: tdbOrganization ?? orig.organization,
       }
     }
 
@@ -109,6 +118,9 @@ export default {
     const context = c.contexts[name]
     if (context !== undefined) {
       let credentials: Auth
+      // anonymous is a type of credential that has no further configuration options
+      // as such, it makes no sense to declare it. We just assume its
+      // existence rather than looking it up.
       if (context.credentials === 'anonymous') {
         credentials = { type: 'anonymous' }
       } else {

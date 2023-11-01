@@ -6,7 +6,7 @@ import replaceDoc from './replaceDoc.js'
 
 const command = new Command()
   .name('doc')
-  .description('Work with TerminusDB documents')
+  .description('document operations')
   .addCommand(getDoc)
   .addCommand(insertDoc)
   .addCommand(deleteDoc)

@@ -1,7 +1,7 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from './state.js'
 
-import { spawnSync, spawn } from 'child_process'
+import { spawnSync } from 'child_process'
 
 const command = new Command()
   .name('curl')
