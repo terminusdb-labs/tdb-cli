@@ -3,6 +3,7 @@ import { program } from '@commander-js/extra-typings'
 
 import doc from './doc/index.js'
 import db from './db/index.js'
+import log from './log.js'
 import graphql from './graphql/index.js'
 import curl from './curl.js'
 import Client from './client.js'
@@ -35,6 +36,7 @@ program
   )
   .addCommand(doc)
   .addCommand(db)
+  .addCommand(log)
   .addCommand(graphql)
   .addCommand(curl)
 await program.parseAsync()
