@@ -20,11 +20,12 @@ const command = new Command()
       request = getClient().get(`api/db`)
     } else {
       const org = organization ?? getOrganization()
-      request = getClient().get(`api/db/${org}`).query({
-        branches: options.branches,
-        verbose: options.verbose,
-      })
+      request = getClient().get(`api/db/${org}`)
     }
+    request = request.query({
+      branches: options.branches,
+      verbose: options.verbose,
+    })
     if (options.json ?? false) {
       request.pipe(process.stdout)
     } else {
