@@ -3,6 +3,7 @@ import { program } from '@commander-js/extra-typings'
 
 import doc from './doc/index.js'
 import db from './db/index.js'
+import branch from './branch/index.js'
 import log from './log.js'
 import graphql from './graphql/index.js'
 import curl from './curl.js'
@@ -36,6 +37,7 @@ program
   )
   .addCommand(doc)
   .addCommand(db)
+  .addCommand(branch)
   .addCommand(log)
   .addCommand(graphql)
   .addCommand(curl)

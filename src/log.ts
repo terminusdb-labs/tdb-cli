@@ -1,11 +1,13 @@
 import { Command } from '@commander-js/extra-typings'
 import resource from './resource.js'
 import { getClient } from './state.js'
+import interpretBranchArgs from './branch/interpretArgs.js'
 
 const command = new Command()
   .name('log')
   .description('log operations')
-  .argument('<resource>', 'the resource to work with', resource)
+  .argument('<spec>', 'either a full resource path or a database name')
+  .argument('[branch]', 'the branch to create')
   .option(
     '-s, --start <start>',
     'How far back in commit log to start giving results',
@@ -14,17 +16,25 @@ const command = new Command()
   .option('-c, --count <count>', 'Number of results to return', parseInt)
   .option('-v, --verbose', 'Give back additional information on commits')
   .option('-j, --json', 'return log as JSON')
-  .action(async (resource, options) => {
-    const request = getClient().get(`api/log/${resource}`).query({
-      start: options.start,
-      count: options.count,
-      verbose: options.verbose,
-    })
+  .action(async (spec, branch, options) => {
+    const resource = interpretBranchArgs(spec, branch)
+    const request = getClient()
+      .get(`api/log/${resource}`)
+      .query({
+        start: options.start,
+        count: options.count,
+        verbose: options.verbose,
+      })
+      .ok((r) => r.status === 200 || r.status === 404)
 
     if (options.json ?? false) {
       request.pipe(process.stdout)
     } else {
       const response = await request
+      if (response.status === 404) {
+        console.error('resource not found')
+        process.exit(1)
+      }
       renderResult(response.body, options.verbose ?? false)
     }
   })

@@ -1,6 +1,7 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
 import parseDb from './parseDb.js'
+import mergePrefixes from './mergePrefixes.js'
 
 const command = new Command()
   .name('create')
@@ -21,18 +22,12 @@ const command = new Command()
     JSON.parse,
   )
   .action(async (db, options) => {
-    // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-    let prefixes: { [key: string]: string } | undefined
-    if (options.prefixes !== undefined) {
+    const prefixes = mergePrefixes(
+      options.dataPrefix,
+      options.schemaPrefix,
       // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-      prefixes = options.prefixes as unknown as { [key: string]: string }
-      if (!('@base' in prefixes) && options.dataPrefix !== undefined) {
-        prefixes['@base'] = options.dataPrefix
-      }
-      if (!('@schema' in prefixes) && options.schemaPrefix !== undefined) {
-        prefixes['@schema'] = options.schemaPrefix
-      }
-    }
+      options.prefixes as { [key: string]: string } | undefined,
+    )
     let label = options.label
     if (label === undefined) {
       // default to the database name
