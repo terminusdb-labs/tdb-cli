@@ -8,12 +8,9 @@ const command = new Command()
   .argument('<database>', 'the database to work with', parseDb)
   .option('-f, --force', 'force the deletion of the database (unsafe)', false)
   .action(async (db, options) => {
-    const request = getClient()
-      .delete(`api/db/${db.resource}`)
-      .type('json')
-      .send({
-        force: options.force,
-      })
+    const request = getClient().put(`api/db/${db.resource}`).type('json').send({
+      force: options.force,
+    })
 
     request.pipe(process.stdout)
   })
