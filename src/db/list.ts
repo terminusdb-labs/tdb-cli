@@ -40,29 +40,30 @@ const command = new Command()
     }
   })
 
-interface HasPath {
+export interface HasPath {
   path: string
 }
 
-interface Sparse {
-  path: string
+export interface Sparse extends HasPath {
   branches?: string[]
 }
 
-interface Verbose {
+export interface Verbose extends HasPath {
   name: string
   label: string
   comment: string
   creation_date: string
   state: string
-  path: string
   branches?: string[]
 }
 
 const JOINT = '└──'
 const ARM = '├──'
 
-function renderBranches(indent: number, branches: string[] | undefined): void {
+export function renderBranches(
+  indent: number,
+  branches: string[] | undefined,
+): void {
   if (branches === undefined) {
     return
   }
