@@ -53,19 +53,12 @@ export default {
       auth = { type: 'token', token: args.token }
     }
     const endpoint = args.server ?? orig?.endpoint ?? null
-    const organization = args.organization
+    const organization = args.organization ?? orig?.organization ?? undefined
 
-    if (auth !== null && endpoint !== null && organization !== null) {
+    if (auth !== null && endpoint !== null) {
       return {
         endpoint,
         credentials: auth,
-        organization,
-      }
-    }
-    if (orig !== null) {
-      return {
-        endpoint: endpoint ?? orig.endpoint,
-        credentials: auth ?? orig.credentials,
         organization,
       }
     }
@@ -131,9 +124,11 @@ export default {
         if (context.team !== undefined) {
           endpoint = `${endpoint}/${context.team}`
         }
+        const organization = context.organization
         return {
           endpoint,
           credentials,
+          organization,
         }
       }
     }

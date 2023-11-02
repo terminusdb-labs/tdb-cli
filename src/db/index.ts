@@ -2,6 +2,7 @@ import { Command } from '@commander-js/extra-typings'
 import create from './create.js'
 import delete_ from './delete.js'
 import list from './list.js'
+import update from './update.js'
 
 const command = new Command()
   .name('db')
@@ -9,4 +10,5 @@ const command = new Command()
   .addCommand(create)
   .addCommand(delete_)
   .addCommand(list)
+  .addCommand(update)
 export default command

@@ -15,15 +15,23 @@ const command = new Command()
   .option('-a, --all', 'show your databases in all organizations')
   .option('-j, --json', 'show the result in json format')
   .action(async (organization, options) => {
-    const org = organization ?? getOrganization()
-    const request = getClient().get(`api/db/${org}`).query({
-      branches: options.branches,
-      verbose: options.verbose,
-    })
+    let request
+    if (options.all) {
+      request = getClient().get(`api/db`)
+    } else {
+      const org = organization ?? getOrganization()
+      request = getClient().get(`api/db/${org}`).query({
+        branches: options.branches,
+        verbose: options.verbose,
+      })
+    }
     if (options.json ?? false) {
       request.pipe(process.stdout)
     } else {
       const response = await request
+      response.body.sort((a: HasPath, b: HasPath) => {
+        return a.path.localeCompare(b.path)
+      })
       if (options.verbose ?? false) {
         renderVerboseResult(response.body)
       } else {
@@ -31,6 +39,10 @@ const command = new Command()
       }
     }
   })
+
+interface HasPath {
+  path: string
+}
 
 interface Sparse {
   path: string
@@ -54,7 +66,7 @@ function renderBranches(indent: number, branches: string[] | undefined): void {
   if (branches === undefined) {
     return
   }
-  const spacer = ' '.repeat(indent + 2)
+  const spacer = ' '.repeat(indent * 3)
   for (let i = 0; i < branches.length; i++) {
     if (i === branches.length - 1) {
       console.log(`${spacer}${JOINT} ${branches[i]}`)
