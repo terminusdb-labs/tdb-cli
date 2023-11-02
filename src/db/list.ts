@@ -95,7 +95,7 @@ function renderVerboseResult(result: Verbose[]): void {
       console.log(`${JOINT} state: ${record.state}`)
     } else {
       console.log(`${ARM} state: ${record.state}`)
-      console.log(`${ARM} branches:`)
+      console.log(`${JOINT} branches:`)
       renderBranches(1, record.branches)
     }
   }
