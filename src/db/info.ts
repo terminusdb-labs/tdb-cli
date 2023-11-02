@@ -18,7 +18,9 @@ const command = new Command()
       // todo fail properly in case of not found
       request.pipe(process.stdout)
     } else {
-      const response = await request
+      const response = await request.ok(
+        (r) => r.status === 200 || r.status === 404,
+      )
       if (response.status === 404) {
         console.error('Database not found')
         process.exit(1)
