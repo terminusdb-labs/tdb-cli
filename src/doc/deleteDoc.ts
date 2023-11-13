@@ -1,11 +1,11 @@
 import { Command, Option } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import resource from '../resource.js'
+import { parseResource } from '../parse.js'
 
 const command = new Command()
   .name('delete')
   .description('Delete documents')
-  .argument('<resource>', 'the resource to work with', resource)
+  .argument('[resource...]', 'the resource to work with')
   .addOption(
     new Option('-g, --graph_type <graphType>')
       .choices(['schema', 'instance'])
@@ -30,9 +30,10 @@ const command = new Command()
   .option('-i, --id <id>', 'The id of the document to delete')
   // the server cli tool has a weird data flag too? what is that about
   .option('-n, --nuke', 'remove all documents from the graph')
-  .action(async (resource, options) => {
+  .action(async (spec, options) => {
+    const resource = parseResource(spec)
     let request = getClient()
-      .delete(`api/document/${resource}`)
+      .delete(`api/document/${resource.resource}`)
       .set('Content-Type', 'application/json')
       .query({
         author: options.author,

@@ -1,11 +1,11 @@
 import { Command, Option } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import resource from '../resource.js'
+import { parseResource } from '../parse.js'
 
 const command = new Command()
   .name('replace')
   .description('Replace documents')
-  .argument('<resource>', 'the resource to work with', resource)
+  .argument('[resource...]', 'the resource to work with')
   .addOption(
     new Option('-g, --graph_type <graphType>')
       .choices(['schema', 'instance'])
@@ -34,9 +34,10 @@ const command = new Command()
     '-d, --data <data>',
     'data to submit. This can be a string with a single json document, several documents, or a list of documents. If absent, data is read from STDIN.',
   )
-  .action(async (resource, options) => {
+  .action(async (spec, options) => {
+    const resource = parseResource(spec)
     let request = getClient()
-      .put(`api/document/${resource}`)
+      .put(`api/document/${resource.resource}`)
       .set('Content-Type', 'application/json')
       .query({
         author: options.author,

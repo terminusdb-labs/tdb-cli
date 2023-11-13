@@ -10,7 +10,7 @@ import graphql from './graphql/index.js'
 import curl from './curl.js'
 import Client from './client.js'
 import Config from './config.js'
-import { setClient, setOrganization, setContext } from './state.js'
+import { setClient, setContext } from './state.js'
 
 program
   .enablePositionalOptions(true)
@@ -23,7 +23,6 @@ program
     }
     setContext(conf)
     setClient(new Client(conf.endpoint, conf.credentials))
-    setOrganization(conf.organization ?? null)
   })
   .option('-s, --server <serverUrl>', 'TerminusDB endpoint')
   .option('-u, --username <username>', 'Username (for authentication)')

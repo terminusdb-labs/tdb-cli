@@ -1,10 +1,11 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
 import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql'
-import resource from '../resource.js'
+import { parseResource } from '../parse.js'
 
-async function getSchema(resource: string | undefined): Promise<void> {
-  const path = `api/graphql/${resource ?? ''}`
+async function getSchema(resource: string[]): Promise<void> {
+  const parsedResource = parseResource(resource)
+  const path = `api/graphql/${parsedResource.resource}`
   const client = getClient()
   const introspectionQuery = getIntrospectionQuery()
   const response = await client
@@ -23,7 +24,7 @@ async function getSchema(resource: string | undefined): Promise<void> {
 const command = new Command()
   .name('get-schema')
   .description('Print the GraphQL schema for the given resource in SDL format')
-  .argument('[resource]', 'the resource to work with', resource)
+  .argument('[resource...]', 'the resource to work with')
   .action(getSchema)
 
 export default command
