@@ -101,7 +101,7 @@ export function parseDb(args: string[], context?: ParseContext): ParsedDb {
       throw new Error("database is not allowed to contain a '/'")
     }
 
-    const organization = parseOrg(args).organization
+    const organization = parseOrg(args, context).organization
     return {
       resource: `${organization}/${database}`,
       organization,
@@ -273,7 +273,7 @@ export function parseResource(
       }
     } else {
       // last argument is a database name. the thing before has to be an organization
-      const org = parseOrg(args)
+      const org = parseOrg(args, context)
       return {
         resource: `${org.organization}/${last}`,
       }

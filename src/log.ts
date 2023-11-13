@@ -1,13 +1,11 @@
 import { Command } from '@commander-js/extra-typings'
-import resource from './resource.js'
 import { getClient } from './state.js'
-import interpretBranchArgs from './branch/interpretArgs.js'
+import { parseResource } from './parse.js'
 
 const command = new Command()
   .name('log')
-  .description('log operations')
-  .argument('<spec>', 'either a full resource path or a database name')
-  .argument('[branch]', 'the branch to create')
+  .description('retrieve a log')
+  .argument('[resource...]', 'the resource to get a log for')
   .option(
     '-s, --start <start>',
     'How far back in commit log to start giving results',
@@ -16,10 +14,10 @@ const command = new Command()
   .option('-c, --count <count>', 'Number of results to return', parseInt)
   .option('-v, --verbose', 'Give back additional information on commits')
   .option('-j, --json', 'return log as JSON')
-  .action(async (spec, branch, options) => {
-    const resource = interpretBranchArgs(spec, branch)
+  .action(async (spec, options) => {
+    const branch = parseResource(spec)
     const request = getClient()
-      .get(`api/log/${resource}`)
+      .get(`api/log/${branch.resource}`)
       .query({
         start: options.start,
         count: options.count,

@@ -2,7 +2,7 @@
     "extends": "@tsconfig/node18/tsconfig.json",
     "baseUrl": "./",
     "include": [
-        "src/**/*.ts",
+        "src/**/*.ts"
     ],
     "compilerOptions": {
         "outDir": "dist",

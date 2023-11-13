@@ -1,14 +1,16 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import parseDb from '../db/parseDb.js'
+import { parseDb } from '../parse.js'
 
 const command = new Command()
   .name('list')
   .description('List branches')
-  .argument('<db>', 'a database', parseDb)
-  .action(async (spec, branch, options) => {
+  .argument('[database...]', 'a database')
+  .action(async (spec, _options) => {
+    const db = parseDb(spec)
+
     const request = getClient()
-      .get(`api/db/${spec.resource}`)
+      .get(`api/db/${db.resource}`)
       .type('json')
       .query({
         branches: true,

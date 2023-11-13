@@ -1,16 +1,17 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import parseDb from './parseDb.js'
 import { type Verbose, renderBranches } from './list.js'
+import { parseDb } from '../parse.js'
 
 const command = new Command()
   .name('info')
   .description('Print database information')
-  .argument('<database>', 'the database to work with', parseDb)
+  .argument('[database...]', 'the database to work with')
   .option('-b, --branches', 'include branches in the result')
   .option('-j, --json', 'show the result in json format')
   .action(async (db, options) => {
-    const request = getClient().get(`api/db/${db.resource}`).query({
+    const parsedDb = parseDb(db)
+    const request = getClient().get(`api/db/${parsedDb.resource}`).query({
       branches: options.branches,
       verbose: true,
     })

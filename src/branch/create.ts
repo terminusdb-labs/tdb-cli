@@ -1,13 +1,11 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import interpretArgs from './interpretArgs.js'
-import mergePrefixes from '../db/mergePrefixes.js'
+import { parseBranch } from '../parse.js'
 
 const command = new Command()
   .name('create')
   .description('Create a branch')
-  .argument('<spec>', 'either a full resource path or a database name')
-  .argument('[branch]', 'the branch to create')
+  .argument('[branch...]', 'the branch to create')
   .option(
     '-o, --origin <origin>',
     'the origin branch to base this branch on',
@@ -20,17 +18,17 @@ const command = new Command()
     'additional defined prefixes in JSON',
     JSON.parse,
   )
-  .action(async (spec, branch, options) => {
-    const resource = interpretArgs(spec, branch)
+  .action(async (spec, options) => {
+    const branch = parseBranch(spec)
     if (options.origin === false) {
       const request = getClient()
-        .post(`api/branch/${resource}`)
+        .post(`api/branch/${branch.resource}`)
         .type('json')
         .send({ prefixes: options.prefixes, schema: options.schema })
       request.pipe(process.stdout)
     } else {
       const request = getClient()
-        .post(`api/branch/${resource}`)
+        .post(`api/branch/${branch.resource}`)
         .type('json')
         .send({ origin: options.origin })
       request.pipe(process.stdout)

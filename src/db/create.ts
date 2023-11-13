@@ -1,12 +1,12 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import parseDb from './parseDb.js'
 import mergePrefixes from './mergePrefixes.js'
+import { parseDb } from '../parse.js'
 
 const command = new Command()
   .name('create')
   .description('Create a database')
-  .argument('<database>', 'the database to work with', parseDb)
+  .argument('[database...]', 'the database to work with')
   .option('-l, --label <label>', 'label to use for this database')
   .option('-c, --comment <comment>', 'long description of this database')
   .option('-p, --public', 'whether this database is to be public')
@@ -22,6 +22,7 @@ const command = new Command()
     JSON.parse,
   )
   .action(async (db, options) => {
+    const parsedDb = parseDb(db)
     const prefixes = mergePrefixes(
       options.dataPrefix,
       options.schemaPrefix,
@@ -31,10 +32,10 @@ const command = new Command()
     let label = options.label
     if (label === undefined) {
       // default to the database name
-      label = db.database
+      label = parsedDb.database
     }
     const request = getClient()
-      .post(`api/db/${db.resource}`)
+      .post(`api/db/${parsedDb.resource}`)
       .type('json')
       .send({
         label,

@@ -1,26 +1,25 @@
 import { Command } from '@commander-js/extra-typings'
-import { getClient, getOrganization } from '../state.js'
-import parseOrganization from './parseOrg.js'
+import { getClient } from '../state.js'
+import { parseOrg } from '../parse.js'
 
 const command = new Command()
   .name('list')
   .description('List databases')
   .argument(
-    '[organization]',
+    '[organization...]',
     'the organization to work with (default uses context organization)',
-    parseOrganization,
   )
   .option('-b, --branches', 'include branches in the result')
   .option('-v, --verbose', 'show detailed information for every database')
   .option('-a, --all', 'show your databases in all organizations')
   .option('-j, --json', 'show the result in json format')
   .action(async (organization, options) => {
+    const parsedOrg = parseOrg(organization)
     let request
     if (options.all) {
       request = getClient().get(`api/db`)
     } else {
-      const org = organization ?? getOrganization()
-      request = getClient().get(`api/db/${org}`)
+      request = getClient().get(`api/db/${parsedOrg.organization}`)
     }
     request = request.query({
       branches: options.branches,
