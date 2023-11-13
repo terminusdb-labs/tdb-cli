@@ -4,12 +4,13 @@ import { program } from '@commander-js/extra-typings'
 import doc from './doc/index.js'
 import db from './db/index.js'
 import branch from './branch/index.js'
+import remote from './remote/index.js'
 import log from './log.js'
 import graphql from './graphql/index.js'
 import curl from './curl.js'
 import Client from './client.js'
 import Config from './config.js'
-import { setClient, setOrganization } from './state.js'
+import { setClient, setOrganization, setContext } from './state.js'
 
 program
   .enablePositionalOptions(true)
@@ -20,6 +21,7 @@ program
       console.error('no config available')
       process.exit(1)
     }
+    setContext(conf)
     setClient(new Client(conf.endpoint, conf.credentials))
     setOrganization(conf.organization ?? null)
   })
@@ -38,7 +40,8 @@ program
   .addCommand(doc)
   .addCommand(db)
   .addCommand(branch)
-  .addCommand(log)
+  .addCommand(remote)
   .addCommand(graphql)
+  .addCommand(log)
   .addCommand(curl)
 await program.parseAsync()

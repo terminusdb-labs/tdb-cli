@@ -18,10 +18,12 @@ function config(): any {
   return _config
 }
 
-interface RuntimeContext {
+export interface RuntimeContext {
   endpoint: string
   credentials: Auth
   organization?: string
+  database?: string
+  branch?: string
 }
 
 export interface CliArgs {

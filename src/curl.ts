@@ -5,8 +5,8 @@ import { spawnSync } from 'child_process'
 
 const command = new Command()
   .name('curl')
-  .description('Run a curl command against the server in the active context.')
-  .argument('<api>', 'API endpoint curl should connect to.')
+  .description('Run a curl command against the server in the active context')
+  .argument('<api>', 'API endpoint curl should connect to')
   .argument('[arguments...]', 'arguments to curl')
   .option('-e, --echo', 'echo the curl command rather than running it')
   .allowUnknownOption(true)

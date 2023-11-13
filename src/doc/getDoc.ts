@@ -1,12 +1,12 @@
 import readLine from 'readline'
 import { Command, Option } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import resource from '../resource.js'
+import { parseResource } from '../parse.js'
 
 const command = new Command()
   .name('get')
   .description('Retrieve documents')
-  .argument('<resource>', 'the resource to work with', resource)
+  .argument('[resource...]', 'the resource to work with')
   .addOption(
     new Option('-g, --graph_type <graphType>')
       .choices(['schema', 'instance'])
@@ -22,8 +22,9 @@ const command = new Command()
   .option('-t, --type <type>')
   .option('--stdin')
   .action(async (resource, options) => {
+    const parsedResource = parseResource(resource)
     const request = getClient()
-      .post(`api/document/${resource}`)
+      .post(`api/document/${parsedResource.resource}`)
       .set('X-HTTP-Method-Override', 'GET')
     const requestOptions: any = {}
     if (options.graph_type !== undefined) {
