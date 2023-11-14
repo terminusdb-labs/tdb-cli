@@ -8,14 +8,23 @@ import log from './log.js'
 import graphql from './graphql/index.js'
 import curl from './curl.js'
 import Client from './client.js'
-import Config from './config.js'
+import Config, { ConfigurationFileError } from './config.js'
 import { setClient, setContext } from './state.js'
 
 program
   .enablePositionalOptions(true)
   .hook('preSubcommand', (command) => {
     const opts = command.opts()
-    const conf = Config.defaultContext(opts)
+    let conf
+    try {
+      conf = Config.defaultContext(opts)
+    } catch (e) {
+      if (e instanceof ConfigurationFileError) {
+        console.error(e.message)
+        process.exit(1)
+      }
+      throw e
+    }
     if (conf === null) {
       console.error('no config available')
       process.exit(1)

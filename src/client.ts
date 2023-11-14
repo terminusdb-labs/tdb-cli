@@ -1,24 +1,5 @@
 import superagent from 'superagent'
-export interface BasicAuth {
-  type: 'basic'
-  username: string
-  password: string
-}
-export interface TokenAuth {
-  type: 'token'
-  token: string
-}
-
-export interface AnonymousAuth {
-  type: 'anonymous'
-}
-
-export interface ForwardAuth {
-  type: 'forwarded'
-  username: string
-}
-
-export type Auth = BasicAuth | TokenAuth | AnonymousAuth | ForwardAuth
+import { type Auth } from './config.js'
 
 export interface AuthHeader {
   header: 'Authorization' | 'X-User-Forward'
