@@ -12,7 +12,7 @@ const command = new Command()
     const conf = config()
     if (conf === null) {
       console.error(
-        "No configuration found. Please initialize one first with 'tdb-cli init'",
+        "No configuration found. Please initialize one first with 'tdb-cli setup'",
       )
       process.exit(1)
     }
