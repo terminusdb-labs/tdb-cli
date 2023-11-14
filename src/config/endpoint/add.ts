@@ -11,7 +11,9 @@ const command = new Command()
   .action((name, url) => {
     const conf = config()
     if (conf === null) {
-      console.error('No configuration found')
+      console.error(
+        "No configuration found. Please initialize one first with 'tdb-cli init'",
+      )
       process.exit(1)
     }
     if (conf.endpoints?.[name] !== undefined) {

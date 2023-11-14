@@ -8,6 +8,7 @@ import log from './log.js'
 import graphql from './graphql/index.js'
 import curl from './curl.js'
 import config from './config/index.js'
+import setup from './setup.js'
 import Client from './client.js'
 import Config, { ConfigurationFileError } from './config.js'
 import { setClient, setContext } from './state.js'
@@ -15,8 +16,9 @@ import { setClient, setContext } from './state.js'
 program
   .enablePositionalOptions(true)
   .hook('preSubcommand', (command) => {
-    // the config command doesn't need any setup. everything else does
-    if (command.args.length === 0 || command.args[0] !== 'config') {
+    // the init config command do not need any setup. everything else does
+    const noconfig = ['config', 'init']
+    if (command.args.length === 0 || !noconfig.includes(command.args[0])) {
       const opts = command.opts()
       let conf
       try {
@@ -55,4 +57,5 @@ program
   .addCommand(log)
   .addCommand(curl)
   .addCommand(config)
+  .addCommand(setup)
 await program.parseAsync()

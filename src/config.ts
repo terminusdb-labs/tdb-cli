@@ -42,7 +42,7 @@ export interface ContextConfig {
   branch?: string
 }
 
-interface ValidatedConfig {
+export interface ValidatedConfig {
   endpoints?: Record<string, string | undefined>
   credentials?: Record<string, Auth | undefined>
   contexts?: Record<string, ContextConfig>
@@ -521,7 +521,7 @@ export default {
       }
       let endpoint
       if (c.endpoints !== undefined) {
-        endpoint = c.endpoints[context.endpoint]
+        endpoint = c.endpoints[context.endpoint]?.replace(/\/+$/, '')
       }
       if (credentials !== undefined && endpoint !== undefined) {
         if (context.team !== undefined) {
