@@ -7,6 +7,7 @@ import branch from './branch/index.js'
 import log from './log.js'
 import graphql from './graphql/index.js'
 import curl from './curl.js'
+import config from './config/index.js'
 import Client from './client.js'
 import Config, { ConfigurationFileError } from './config.js'
 import { setClient, setContext } from './state.js'
@@ -14,23 +15,26 @@ import { setClient, setContext } from './state.js'
 program
   .enablePositionalOptions(true)
   .hook('preSubcommand', (command) => {
-    const opts = command.opts()
-    let conf
-    try {
-      conf = Config.defaultContext(opts)
-    } catch (e) {
-      if (e instanceof ConfigurationFileError) {
-        console.error(e.message)
+    // the config command doesn't need any setup. everything else does
+    if (command.args.length === 0 || command.args[0] !== 'config') {
+      const opts = command.opts()
+      let conf
+      try {
+        conf = Config.defaultContext(opts)
+      } catch (e) {
+        if (e instanceof ConfigurationFileError) {
+          console.error(e.message)
+          process.exit(1)
+        }
+        throw e
+      }
+      if (conf === null) {
+        console.error('no config available')
         process.exit(1)
       }
-      throw e
+      setContext(conf)
+      setClient(new Client(conf.endpoint, conf.credentials))
     }
-    if (conf === null) {
-      console.error('no config available')
-      process.exit(1)
-    }
-    setContext(conf)
-    setClient(new Client(conf.endpoint, conf.credentials))
   })
   .option('-s, --server <serverUrl>', 'TerminusDB endpoint')
   .option('-u, --username <username>', 'Username (for authentication)')
@@ -50,4 +54,5 @@ program
   .addCommand(graphql)
   .addCommand(log)
   .addCommand(curl)
+  .addCommand(config)
 await program.parseAsync()

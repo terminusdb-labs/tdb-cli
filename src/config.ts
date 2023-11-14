@@ -2,7 +2,7 @@ import os from 'os'
 import fs from 'fs'
 import yaml, { YAMLParseError } from 'yaml'
 
-function configPath(): string {
+export function configPath(): string {
   return process.env.TDB_CLI_CONFIG_PATH ?? os.homedir() + '/.tdb.yml'
 }
 
@@ -50,7 +50,7 @@ interface ValidatedConfig {
 }
 
 let _config: ValidatedConfig | null | undefined
-function config(): ValidatedConfig | null {
+export function config(): ValidatedConfig | null {
   if (_config !== undefined) {
     return _config
   }
@@ -92,6 +92,9 @@ const _expectedConfigFields = [
   'current_context',
 ]
 function validateConfig(config: unknown): ValidatedConfig {
+  if (config === null) {
+    return {}
+  }
   if (config instanceof Object) {
     for (const key in config) {
       if (!_expectedConfigFields.includes(key)) {
@@ -339,7 +342,7 @@ function validateSingleContext(
     throw new ConfigurationFileError(
       `context ${name} contains an endpoint that is not a string`,
     )
-  } else if (endpoints[unvalidated.endpoint] === undefined) {
+  } else if (endpoints?.[unvalidated.endpoint] === undefined) {
     throw new ConfigurationFileError(
       `context ${name} refers to endpoint '${unvalidated.endpoint}', but no such endpoint was configured`,
     )
