@@ -10,7 +10,7 @@ const command = new Command()
   .action(async (db, options) => {
     const parsedDb = parseDb(db)
     const request = getClient()
-      .put(`api/db/${parsedDb.resource}`)
+      .delete(`api/db/${parsedDb.resource}`)
       .type('json')
       .send({
         force: options.force,
