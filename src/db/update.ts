@@ -1,6 +1,6 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import { parseDb } from '../parse.js'
+import { withParsedDb } from '../parse.js'
 
 const command = new Command()
   .name('update')
@@ -20,32 +20,33 @@ const command = new Command()
     'additional defined prefixes in JSON',
     JSON.parse,
   )
-  .action(async (db, options) => {
-    const parsedDb = parseDb(db)
-    // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-    let prefixes: { [key: string]: string } | undefined
-    if (options.prefixes !== undefined) {
+  .action(
+    withParsedDb(async (db, options) => {
       // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-      prefixes = options.prefixes as unknown as { [key: string]: string }
-      if (!('@base' in prefixes) && options.dataPrefix !== undefined) {
-        prefixes['@base'] = options.dataPrefix
+      let prefixes: { [key: string]: string } | undefined
+      if (options.prefixes !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+        prefixes = options.prefixes as unknown as { [key: string]: string }
+        if (!('@base' in prefixes) && options.dataPrefix !== undefined) {
+          prefixes['@base'] = options.dataPrefix
+        }
+        if (!('@schema' in prefixes) && options.schemaPrefix !== undefined) {
+          prefixes['@schema'] = options.schemaPrefix
+        }
       }
-      if (!('@schema' in prefixes) && options.schemaPrefix !== undefined) {
-        prefixes['@schema'] = options.schemaPrefix
-      }
-    }
-    const request = getClient()
-      .put(`api/db/${parsedDb.resource}`)
-      .type('json')
-      .send({
-        label: options.label,
-        comment: options.comment,
-        public: options.public,
-        schema: options.schema,
-        prefixes,
-      })
+      const request = getClient()
+        .put(`api/db/${db.resource}`)
+        .type('json')
+        .send({
+          label: options.label,
+          comment: options.comment,
+          public: options.public,
+          schema: options.schema,
+          prefixes,
+        })
 
-    request.pipe(process.stdout)
-  })
+      request.pipe(process.stdout)
+    }),
+  )
 
 export default command

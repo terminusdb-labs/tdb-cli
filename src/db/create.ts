@@ -1,7 +1,7 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
 import mergePrefixes from './mergePrefixes.js'
-import { parseDb } from '../parse.js'
+import { withParsedDb } from '../parse.js'
 
 const command = new Command()
   .name('create')
@@ -21,30 +21,31 @@ const command = new Command()
     'additional defined prefixes in JSON',
     JSON.parse,
   )
-  .action(async (db, options) => {
-    const parsedDb = parseDb(db)
-    const prefixes = mergePrefixes(
-      options.dataPrefix,
-      options.schemaPrefix,
-      // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-      options.prefixes as { [key: string]: string } | undefined,
-    )
-    let label = options.label
-    if (label === undefined) {
-      // default to the database name
-      label = parsedDb.database
-    }
-    const request = getClient()
-      .post(`api/db/${parsedDb.resource}`)
-      .type('json')
-      .send({
-        label,
-        comment: options.comment,
-        prefixes,
-        public: options.public,
-        schema: options.schema,
-      })
+  .action(
+    withParsedDb(async (db, options) => {
+      const prefixes = mergePrefixes(
+        options.dataPrefix,
+        options.schemaPrefix,
+        // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+        options.prefixes as { [key: string]: string } | undefined,
+      )
+      let label = options.label
+      if (label === undefined) {
+        // default to the database name
+        label = db.database
+      }
+      const request = getClient()
+        .post(`api/db/${db.resource}`)
+        .type('json')
+        .send({
+          label,
+          comment: options.comment,
+          prefixes,
+          public: options.public,
+          schema: options.schema,
+        })
 
-    request.pipe(process.stdout)
-  })
+      request.pipe(process.stdout)
+    }),
+  )
 export default command

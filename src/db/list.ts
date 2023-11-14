@@ -1,6 +1,6 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import { parseOrg } from '../parse.js'
+import { withParsedOrg } from '../parse.js'
 
 const command = new Command()
   .name('list')
@@ -13,32 +13,33 @@ const command = new Command()
   .option('-v, --verbose', 'show detailed information for every database')
   .option('-a, --all', 'show your databases in all organizations')
   .option('-j, --json', 'show the result in json format')
-  .action(async (organization, options) => {
-    const parsedOrg = parseOrg(organization)
-    let request
-    if (options.all) {
-      request = getClient().get(`api/db`)
-    } else {
-      request = getClient().get(`api/db/${parsedOrg.organization}`)
-    }
-    request = request.query({
-      branches: options.branches,
-      verbose: options.verbose,
-    })
-    if (options.json ?? false) {
-      request.pipe(process.stdout)
-    } else {
-      const response = await request
-      response.body.sort((a: HasPath, b: HasPath) => {
-        return a.path.localeCompare(b.path)
-      })
-      if (options.verbose ?? false) {
-        renderVerboseResult(response.body)
+  .action(
+    withParsedOrg(async (organization, options) => {
+      let request
+      if (options.all) {
+        request = getClient().get(`api/db`)
       } else {
-        renderSparseResult(response.body)
+        request = getClient().get(`api/db/${organization.organization}`)
       }
-    }
-  })
+      request = request.query({
+        branches: options.branches,
+        verbose: options.verbose,
+      })
+      if (options.json ?? false) {
+        request.pipe(process.stdout)
+      } else {
+        const response = await request
+        response.body.sort((a: HasPath, b: HasPath) => {
+          return a.path.localeCompare(b.path)
+        })
+        if (options.verbose ?? false) {
+          renderVerboseResult(response.body)
+        } else {
+          renderSparseResult(response.body)
+        }
+      }
+    }),
+  )
 
 export interface HasPath {
   path: string

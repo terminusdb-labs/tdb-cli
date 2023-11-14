@@ -1,6 +1,6 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import { parseBranch } from '../parse.js'
+import { withParsedBranch } from '../parse.js'
 
 const command = new Command()
   .name('create')
@@ -18,20 +18,21 @@ const command = new Command()
     'additional defined prefixes in JSON',
     JSON.parse,
   )
-  .action(async (spec, options) => {
-    const branch = parseBranch(spec)
-    if (options.origin === false) {
-      const request = getClient()
-        .post(`api/branch/${branch.resource}`)
-        .type('json')
-        .send({ prefixes: options.prefixes, schema: options.schema })
-      request.pipe(process.stdout)
-    } else {
-      const request = getClient()
-        .post(`api/branch/${branch.resource}`)
-        .type('json')
-        .send({ origin: options.origin })
-      request.pipe(process.stdout)
-    }
-  })
+  .action(
+    withParsedBranch(async (branch, options) => {
+      if (options.origin === false) {
+        const request = getClient()
+          .post(`api/branch/${branch.resource}`)
+          .type('json')
+          .send({ prefixes: options.prefixes, schema: options.schema })
+        request.pipe(process.stdout)
+      } else {
+        const request = getClient()
+          .post(`api/branch/${branch.resource}`)
+          .type('json')
+          .send({ origin: options.origin })
+        request.pipe(process.stdout)
+      }
+    }),
+  )
 export default command

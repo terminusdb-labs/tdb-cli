@@ -10,12 +10,14 @@ export interface ParsedOrg {
   organization: string
 }
 
+export class ResourceParseError extends Error {}
+
 export function parseOrg(args: string[], context?: ParseContext): ParsedOrg {
   const context_ = context ?? (getContext() as ParseContext)
   if (args.length === 0) {
     // everything comes from the context
     if (context_.organization === undefined) {
-      throw new Error("couldn't resolve organization from context")
+      throw new ResourceParseError("couldn't resolve organization from context")
     }
 
     return {
@@ -23,9 +25,9 @@ export function parseOrg(args: string[], context?: ParseContext): ParsedOrg {
     }
   } else if (args.length !== 1) {
     // too much!
-    throw new Error('Too many arguments to parse an organization')
+    throw new ResourceParseError('Too many arguments to parse an organization')
   } else if (args[0].includes('/')) {
-    throw new Error(`${args[0]} does not refer to an organization`)
+    throw new ResourceParseError(`${args[0]} does not refer to an organization`)
   } else {
     return {
       organization: args[0],
@@ -44,13 +46,13 @@ export function parseDb(args: string[], context?: ParseContext): ParsedDb {
   if (args.length === 0) {
     // everything comes from the context
     if (context_.database === undefined) {
-      throw new Error("couldn't resolve database from context")
+      throw new ResourceParseError("couldn't resolve database from context")
     }
     if (
       context_.organization === undefined &&
       !context_.database.startsWith('_')
     ) {
-      throw new Error("couldn't resolve organization from context")
+      throw new ResourceParseError("couldn't resolve organization from context")
     }
     return {
       resource:
@@ -73,7 +75,7 @@ export function parseDb(args: string[], context?: ParseContext): ParsedDb {
       // assume it's a full resource
       const m = args[0].match(/^([^/]+)\/([^/]+)$/)
       if (m === null) {
-        throw new Error('resource format was not for a database')
+        throw new ResourceParseError('resource format was not for a database')
       }
       return {
         resource: args[0],
@@ -83,7 +85,7 @@ export function parseDb(args: string[], context?: ParseContext): ParsedDb {
     } else {
       // This is only talking about a database. get organization from context
       if (context_.organization === undefined) {
-        throw new Error('organization was not present in context')
+        throw new ResourceParseError('organization was not present in context')
       }
       return {
         resource: `${context_.organization}/${args[0]}`,
@@ -98,7 +100,7 @@ export function parseDb(args: string[], context?: ParseContext): ParsedDb {
       throw new Error('no database (impossible)')
     }
     if (database.includes('/')) {
-      throw new Error("database is not allowed to contain a '/'")
+      throw new ResourceParseError("database is not allowed to contain a '/'")
     }
 
     const organization = parseOrg(args, context).organization
@@ -108,7 +110,7 @@ export function parseDb(args: string[], context?: ParseContext): ParsedDb {
       database,
     }
   } else {
-    throw new Error('too many arguments for resolving a database')
+    throw new ResourceParseError('too many arguments for resolving a database')
   }
 }
 
@@ -127,10 +129,10 @@ export function parseBranch(
   if (args.length === 0) {
     // everything comes from the context
     if (context_.organization === undefined) {
-      throw new Error("couldn't resolve organization from context")
+      throw new ResourceParseError("couldn't resolve organization from context")
     }
     if (context_.database === undefined) {
-      throw new Error("couldn't resolve database from context")
+      throw new ResourceParseError("couldn't resolve database from context")
     }
     let branch = context_.branch
     if (branch === undefined) {
@@ -147,7 +149,7 @@ export function parseBranch(
     if (args[0].includes('/')) {
       const m = args[0].match(/^([^/]+)\/([^/]+)(\/local\/branch\/([^/]+))?$/)
       if (m === null) {
-        throw new Error('resource does not describe a branch')
+        throw new ResourceParseError('resource does not describe a branch')
       }
       if (m[3] === undefined) {
         // this is describing just a database, with an implicit main branch
@@ -168,10 +170,12 @@ export function parseBranch(
     } else {
       // it's just a branch name. everything else comes from context.
       if (context_.organization === undefined) {
-        throw new Error("couldn't resolve organization from context")
+        throw new ResourceParseError(
+          "couldn't resolve organization from context",
+        )
       }
       if (context_.database === undefined) {
-        throw new Error("couldn't resolve database from context")
+        throw new ResourceParseError("couldn't resolve database from context")
       }
       return {
         resource: `$(context.organization}/${context_.database}/local/branch/${args[0]}`,
@@ -190,7 +194,7 @@ export function parseBranch(
 
     const db = parseDb(args, context)
     if (db.organization === null) {
-      throw new Error('system graphs have no branch')
+      throw new ResourceParseError('system graphs have no branch')
     }
     return {
       resource: `${db.organization}/${db.database}/local/branch/${branch}`,
@@ -228,7 +232,9 @@ export function parseResource(
   if (args.length === 0) {
     // everything from context.
     if (context_.database === undefined) {
-      throw new Error('database could not be resolved from context')
+      throw new ResourceParseError(
+        'database could not be resolved from context',
+      )
     }
     if (
       context_.organization === undefined &&
@@ -279,4 +285,48 @@ export function parseResource(
       }
     }
   }
+}
+
+function withParsed<T extends any[], P>(
+  parser: (args: string[]) => P,
+  fn: (org: P, ...args: T) => Promise<void>,
+): (args: string[], ...extraArgs: T) => Promise<void> {
+  return async (args: string[], ...extraArgs: T) => {
+    let parsed
+    try {
+      parsed = parser(args)
+    } catch (e) {
+      if (e instanceof ResourceParseError) {
+        console.error(e.message)
+        process.exit(1)
+      } else {
+        throw e
+      }
+    }
+    await fn(parsed, ...extraArgs)
+  }
+}
+
+export function withParsedOrg<T extends any[]>(
+  fn: (org: ParsedOrg, ...args: T) => Promise<void>,
+): (args: string[], ...extraArgs: T) => Promise<void> {
+  return withParsed(parseOrg, fn)
+}
+
+export function withParsedDb<T extends any[]>(
+  fn: (db: ParsedDb, ...args: T) => Promise<void>,
+): (args: string[], ...extraArgs: T) => Promise<void> {
+  return withParsed(parseDb, fn)
+}
+
+export function withParsedBranch<T extends any[]>(
+  fn: (branch: ParsedBranch, ...args: T) => Promise<void>,
+): (args: string[], ...extraArgs: T) => Promise<void> {
+  return withParsed(parseBranch, fn)
+}
+
+export function withParsedResource<T extends any[]>(
+  fn: (branch: ParsedResource, ...args: T) => Promise<void>,
+): (args: string[], ...extraArgs: T) => Promise<void> {
+  return withParsed(parseResource, fn)
 }

@@ -1,6 +1,6 @@
 import { Command } from '@commander-js/extra-typings'
 import { getClient } from './state.js'
-import { parseResource } from './parse.js'
+import { withParsedResource } from './parse.js'
 
 const command = new Command()
   .name('log')
@@ -14,28 +14,29 @@ const command = new Command()
   .option('-c, --count <count>', 'Number of results to return', parseInt)
   .option('-v, --verbose', 'Give back additional information on commits')
   .option('-j, --json', 'return log as JSON')
-  .action(async (spec, options) => {
-    const branch = parseResource(spec)
-    const request = getClient()
-      .get(`api/log/${branch.resource}`)
-      .query({
-        start: options.start,
-        count: options.count,
-        verbose: options.verbose,
-      })
-      .ok((r) => r.status === 200 || r.status === 404)
+  .action(
+    withParsedResource(async (resource, options) => {
+      const request = getClient()
+        .get(`api/log/${resource.resource}`)
+        .query({
+          start: options.start,
+          count: options.count,
+          verbose: options.verbose,
+        })
+        .ok((r) => r.status === 200 || r.status === 404)
 
-    if (options.json ?? false) {
-      request.pipe(process.stdout)
-    } else {
-      const response = await request
-      if (response.status === 404) {
-        console.error('resource not found')
-        process.exit(1)
+      if (options.json ?? false) {
+        request.pipe(process.stdout)
+      } else {
+        const response = await request
+        if (response.status === 404) {
+          console.error('resource not found')
+          process.exit(1)
+        }
+        renderResult(response.body, options.verbose ?? false)
       }
-      renderResult(response.body, options.verbose ?? false)
-    }
-  })
+    }),
+  )
 
 interface Commit {
   identifier: string

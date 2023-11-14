@@ -1,6 +1,6 @@
 import { Command, Option } from '@commander-js/extra-typings'
 import { getClient } from '../state.js'
-import { parseResource } from '../parse.js'
+import { withParsedResource } from '../parse.js'
 
 const command = new Command()
   .name('replace')
@@ -34,30 +34,31 @@ const command = new Command()
     '-d, --data <data>',
     'data to submit. This can be a string with a single json document, several documents, or a list of documents. If absent, data is read from STDIN.',
   )
-  .action(async (spec, options) => {
-    const resource = parseResource(spec)
-    let request = getClient()
-      .put(`api/document/${resource.resource}`)
-      .set('Content-Type', 'application/json')
-      .query({
-        author: options.author,
-        message: options.message,
-        graph_type: options.graph_type,
-        require_migration: options.requireMigration,
-        allow_destructive_migration: options.allowDestructiveMigration,
-        raw_json: options.rawJson,
-        create: options.create,
-      })
-    if (options.data !== undefined) {
-      request.send(options.data).pipe(process.stdout)
-    } else {
-      // this code is super annoying cause it's not properly streaming.
-      // the documentation for superagent implies we should be able to pipe directly but I've not been able to get this to work.
-      for await (const chunk of process.stdin) {
-        request = request.send(chunk.toString())
+  .action(
+    withParsedResource(async (resource, options) => {
+      let request = getClient()
+        .put(`api/document/${resource.resource}`)
+        .set('Content-Type', 'application/json')
+        .query({
+          author: options.author,
+          message: options.message,
+          graph_type: options.graph_type,
+          require_migration: options.requireMigration,
+          allow_destructive_migration: options.allowDestructiveMigration,
+          raw_json: options.rawJson,
+          create: options.create,
+        })
+      if (options.data !== undefined) {
+        request.send(options.data).pipe(process.stdout)
+      } else {
+        // this code is super annoying cause it's not properly streaming.
+        // the documentation for superagent implies we should be able to pipe directly but I've not been able to get this to work.
+        for await (const chunk of process.stdin) {
+          request = request.send(chunk.toString())
+        }
+        request.pipe(process.stdout)
       }
-      request.pipe(process.stdout)
-    }
-  })
+    }),
+  )
 
 export default command

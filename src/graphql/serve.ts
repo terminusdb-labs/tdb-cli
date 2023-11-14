@@ -7,15 +7,14 @@ import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import open from 'open'
 import getPort from 'get-port'
-import { parseResource } from '../parse.js'
+import { type ParsedResource, withParsedResource } from '../parse.js'
 const dir = dirname(fileURLToPath(import.meta.url))
 const template = await readFile(dir + '/../../assets/graphiql.tpl', 'utf8')
 
 async function serve(
-  resource: string[],
+  resource: ParsedResource,
   opts: { port: number; open?: boolean },
 ): Promise<void> {
-  const parsedResource = parseResource(resource)
   const client = getClient()
 
   const app = express()
@@ -31,7 +30,7 @@ async function serve(
 
   const port = await getPort({ port: opts.port })
   app.listen(port, 'localhost')
-  const localResource = '/' + parsedResource.resource
+  const localResource = '/' + resource.resource
   console.log(
     `Hosting a GraphiQL endpoint at http://localhost:${port}${localResource}`,
   )
@@ -49,6 +48,6 @@ const command = new Command()
     '-o, --open',
     'automatically open the GraphiQL endpoint in a browser window',
   )
-  .action(serve)
+  .action(withParsedResource(serve))
 
 export default command
