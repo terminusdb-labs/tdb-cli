@@ -114,6 +114,21 @@ function validateConfig(config: unknown): ValidatedConfig {
         unvalidated.credentials as Record<string, Auth>,
       )
     }
+
+    if (unvalidated.current_context !== undefined) {
+      if (typeof unvalidated.current_context !== 'string') {
+        throw new ConfigurationFileError(
+          'current_context in configuration is not a string',
+        )
+      }
+      const contexts = unvalidated.contexts as Record<string, unknown>
+      if (contexts[unvalidated.current_context] === undefined) {
+        throw new ConfigurationFileError(
+          `configured current_context points at '${unvalidated.current_context}', but no such context was configured`,
+        )
+      }
+    }
+
     return config as ValidatedConfig
   }
   throw new ConfigurationFileError('configuration file malformatted')
