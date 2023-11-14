@@ -1,6 +1,6 @@
 import os from 'os'
 import fs from 'fs'
-import yaml, { YAMLException } from 'js-yaml'
+import yaml, { YAMLParseError } from 'yaml'
 
 function configPath(): string {
   return process.env.TDB_CLI_CONFIG_PATH ?? os.homedir() + '/.tdb.yml'
@@ -57,14 +57,14 @@ function config(): ValidatedConfig | null {
   _config = null
   try {
     const file = fs.readFileSync(configPath(), 'utf8')
-    const parsedConfig = yaml.load(file)
+    const parsedConfig = yaml.parse(file)
     _config = validateConfig(parsedConfig)
   } catch (e) {
     // two things could have gone wrong here. either the file didn't
     // exist or it wasn't a proper yaml file not existing is ok. There
     // is a chance enough context is given using CLI.  But a parse
     // error should be reported immediately.
-    if (e instanceof YAMLException) {
+    if (e instanceof YAMLParseError) {
       console.error(
         `You have an error in your configuration file (${configPath()}):`,
       )
