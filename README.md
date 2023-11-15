@@ -27,8 +27,9 @@ Without argument, everything is inferred from context.
 
 #### One argument
 If the single argument contains a /, it is assumed to be in the format `<organization>/<database>`.
-Otherwise, it is assumed to be a database name, and organization is taken from context.
+Example: `tdb-cli db info myorganization/mydatabase`
 
+Otherwise, it is assumed to be a database name, and organization is taken from context.
 Example: `tdb-cli db info mydatabase`
 
 #### Two arguments
