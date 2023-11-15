@@ -140,7 +140,7 @@ endpoints:
 There are four types of credentials:
 - basic: Authentication with a username and password. This is what you'll most likely need for a self-hosted instance of TerminusDB.
 - token: Authentication with a token. This is what TerminusCMS uses.
-- anonymous: No authentication. This can be used with public endpoints.
+- anonymous: No authentication. This can be used with public endpoints. While allowed, you never actually have to explicitely configure this, as an implicit `anonymous` credentials is always configured.
 - forwarded: 'fake' authentication using the header `X-User-Forward`. This is sometimes used in scenarios where actual authentication is done using proxy middleware. You'll probably not need this.
 
 These credentials are configured in a key-value map like so:
