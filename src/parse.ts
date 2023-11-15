@@ -287,6 +287,24 @@ export function parseResource(
   }
 }
 
+interface HasCode {
+  code: string | undefined
+}
+interface HasBody {
+  body: GenericResponseBody | undefined
+}
+
+interface HasStatus {
+  status: number | undefined
+  response: HasBody | undefined
+}
+
+interface GenericResponseBody {
+  message: string | undefined
+  'api:message': string | undefined
+  err: string | undefined
+}
+
 function withParsed<T extends any[], P>(
   parser: (args: string[]) => P,
   fn: (org: P, ...args: T) => Promise<void>,
@@ -303,7 +321,38 @@ function withParsed<T extends any[], P>(
         throw e
       }
     }
-    await fn(parsed, ...extraArgs)
+    try {
+      await fn(parsed, ...extraArgs)
+    } catch (e) {
+      if ((typeof e === 'object' && (e as HasCode)?.code) === 'ECONNREFUSED') {
+        console.error('Could not connect to server.')
+        process.exit(1)
+      } else if (
+        (typeof e === 'object' && (e as HasStatus)?.status) !== undefined
+      ) {
+        // there's a bunch of things that could be wrong here
+        // since this is the catch-all for error responses for the
+        // server that weren't otherwise handled by whatever client
+        // method was performed, try to do something generic here.
+        const body = (e as HasStatus)?.response?.body
+        if (body === undefined) {
+          throw e
+        }
+        if (body['api:message'] !== undefined) {
+          console.error(body['api:message'])
+        } else if (body.err === 'Token not found') {
+          // there should be a better way to spot authentication errors coming out of the tokens..
+          console.error(
+            'There is a problem with your authentication token. Please ensure that it is correct.',
+          )
+        } else {
+          throw e
+        }
+        process.exit(1)
+      } else {
+        throw e
+      }
+    }
   }
 }
 
