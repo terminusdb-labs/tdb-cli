@@ -18,14 +18,14 @@ tdb-cli setup
 tdb-cli is a new tool, so it cannot yet do everything that TerminusDB can.
 
 The following subcommands are now implemented:
-- db: create and delete databases and retrieve information about them
-- branch: create, list and delete branches
-- doc: CRUD operations on documents in the database
-- log: shows the commit history
-- graphql: launch a GraphiQL instance or get the schema for a resource
-- curl: run arbitrary curl commands using the endpoint and credentials in context
-- config: utilities for querying and changing your configuration
-- setup: an interactive setup tool for your configuration
+- `db`: create and delete databases and retrieve information about them
+- `branch`: create, list and delete branches
+- `doc`: CRUD operations on documents in the database
+- `log`: shows the commit history
+- `graphql`: launch a GraphiQL instance or get the schema for a resource
+- `curl`: run arbitrary curl commands using the endpoint and credentials in context
+- `config`: utilities for querying and changing your configuration
+- `setup`: an interactive setup tool for your configuration
 
 ## Context
 Whenever possible, tdb-cli will try to infer what you're trying to
@@ -64,7 +64,7 @@ more generically, resources. The way these are specified are uniform
 across commands.
 
 This tool will use a combination of information in your configuration
-file, command line flags and finally the parameters of this command to
+file, command line flags and finally the parameters of the command to
 figure out what resource to work with.
 
 ### Specifying a database
