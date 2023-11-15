@@ -3,17 +3,16 @@
 This tool lets you do basic things to a terminusdb instance, like storing and retrieving documents.
 
 ## Installation
-
-While this repository is unpublished, the way to install is by manually cloning this repository, then running
-
 ```
-npm install -g <path to cloned repository>
+npm install -g @terminusdb/tdb-cli
 ```
 
-The installed binary will be a symlink into the repository directory. This also means that code changes in this directory are immediately available in the installed CLI tool after build.
+Then,
+```
+tdb-cli setup
+```
 
-After installation, you can run `tdb-cli setup` to start an
-interactive setup tool to create your confiugration.
+`tdb-cli setup` will start an interactive setup tool to create your configuration.
 
 ## Argument interpretation
 Most of the commands in this tool operate on databases, branches and
