@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "prepare": "npm run build",
+    "dev-build": "tsc",
     "build": "tsc -p tsconfig.prod.json",
     "clean": "rm -rf ./dist",
     "dev": "tsc -w",
