@@ -115,6 +115,104 @@ Otherwise, the last argument is assumed to be a database, and the
 
 Example: `tdb-cli doc get myorganization mydatabase`
 
+## The configuration file
+By default, the configuration file lives in your homedir at `~/.tdb.yml`. This can be overridden with the environment variable `TDB_CLI_CONFIG_PATH`.
+
+The configuration file is a YAML consisting of 3 sections:
+- endpoints: all the endpoints you wish to connect to
+- credentials: credentials to use while connecting
+- contexts: configurations to use as defaults in tdb-cli
+
+Finally, there's a field `current_context`, which configures the
+context used when not overridden.
+
+### Endpoints
+Endpoints are a simple key value mapping from names to URLs.
+
+Example:
+```yaml
+endpoints:
+  foo: http://example.org
+  bar: http://example.com
+```
+
+### Credentials
+There are four types of credentials:
+- basic: Authentication with a username and password. This is what you'll most likely need for a self-hosted instance of TerminusDB.
+- token: Authentication with a token. This is what TerminusCMS uses.
+- anonymous: No authentication. This can be used with public endpoints.
+- forwarded: 'fake' authentication using the header `X-User-Forward`. This is sometimes used in scenarios where actual authentication is done using proxy middleware. You'll probably not need this.
+
+These credentials are configured in a key-value map like so:
+```yaml
+credentials:
+  foo:
+    type: basic
+    username: britney
+    password: chicken123
+  bar:
+    type: token
+    token: ..some long token here..
+  baz:
+    type: anonymous #Unnecessary but documented for completeness. See below.
+  quux:
+    type: forwarded
+    username: taylor
+```
+
+As a special case, the credentials named `anonymous` (of type
+`anonymous`) is always assumed to exist. There is no need to
+explicitely configure it.
+
+### Contexts
+A context describes which endpoint to use with which set of
+credentials, and optionally configures a default `team`, `organization`,
+`database` and `branch`.
+
+The names used for the endpoint and the credentials correspond to the
+keys in the mappings described above.
+
+Note that `team` is only relevant in the context of TerminusCMS and
+will not work out of the box with a self-hosted instance.
+
+Example:
+```yaml
+contexts:
+  foo:
+    endpoint: myendpoint
+    credentials: mycredentials
+  foo-defaults:
+    endpoint: myendpint
+    credentials: mycredentials
+    organization: myorg
+    database: mydb
+    branch: somebranch
+  cms:
+    endpoint: TerminusCMS
+    credentials: mytokencredentials
+    team: myteam
+    organization: myteam # note that on TerminusCMS, team and organization tend to be the same unless you're collaborating across organizations.
+```
+
+### An example minimum configuration for a self-hosted instance
+This is what `tdb-cli setup` will produce for a self-hosted instance with credentials `admin:root` and 'admin' as the default organization:
+
+```yaml
+endpoints:
+  local: http://localhost:6363
+credentials:
+  local:
+    type: basic
+    username: admin
+    password: root
+contexts:
+  local:
+    endpoint: local
+    credentials: local
+    organization: admin
+current_context: local
+```
+
 ## Manual build
 
 To rebuild the CLI tool, just run
