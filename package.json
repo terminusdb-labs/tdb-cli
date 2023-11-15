@@ -1,6 +1,6 @@
 {
   "name": "@terminusdb/tdb-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A CLI tool for interaction with a remote TerminusDB",
   "type": "module",
   "scripts": {
