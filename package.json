@@ -17,7 +17,6 @@
   "author": "Matthijs van Otterdijk",
   "license": "Apache2",
   "dependencies": {
-    "@commander-js/extra-typings": "^11.0.0",
     "commander": "^11.0.0",
     "express": "^4.18.2",
     "get-port": "^7.0.0",
@@ -29,6 +28,7 @@
   },
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
+    "@commander-js/extra-typings": "^11.0.0",
     "@tsconfig/node18": "^18.2.2",
     "@types/express": "^4.17.18",
     "@types/inquirer": "^9.0.7",
