@@ -90,8 +90,10 @@ Example: `tdb-cli db info myorganization mydatabase`
 Without argument, everything is inferred from context.
 
 #### One argument
-If the single argument contains a /, it is assumed to be a path leading to a branch.
-This is either `<organization>/<database>`, or `<organization>/<database>/local/branch/<branch>`.
+If the single argument contains a /, it is assumed to be a path
+leading to a branch.  This is either `<organization>/<database>` (in
+which case the 'main' branch is inferred), or
+`<organization>/<database>/local/branch/<branch>`.
 
 Example: `tdb-cli branch create myorganization/mydatabase/local/branch/newbranch`
 
@@ -163,9 +165,9 @@ Example: `tdb-cli doc get myorganization mydatabase`
 By default, the configuration file lives in your homedir at `~/.tdb.yml`. This can be overridden with the environment variable `TDB_CLI_CONFIG_PATH`.
 
 The configuration file is a YAML consisting of 3 sections:
-- endpoints: all the endpoints you wish to connect to
-- credentials: credentials to use while connecting
-- contexts: configurations to use as defaults in tdb-cli
+- `endpoints`: all the endpoints you wish to connect to
+- `credentials`: credentials to use while connecting
+- `contexts`: configurations to use as defaults in tdb-cli
 
 Finally, there's a field `current_context`, which configures the
 context used when not overridden.
