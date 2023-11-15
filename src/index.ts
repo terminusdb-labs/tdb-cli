@@ -17,7 +17,7 @@ program
   .enablePositionalOptions(true)
   .hook('preSubcommand', (command) => {
     // the init config command do not need any setup. everything else does
-    const noconfig = ['config', 'init']
+    const noconfig = ['config', 'setup']
     if (command.args.length === 0 || !noconfig.includes(command.args[0])) {
       const opts = command.opts()
       let conf
