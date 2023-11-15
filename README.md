@@ -12,6 +12,9 @@ npm install -g <path to cloned repository>
 
 The installed binary will be a symlink into the repository directory. This also means that code changes in this directory are immediately available in the installed CLI tool after build.
 
+After installation, you can run `tdb-cli setup` to start an
+interactive setup tool to create your confiugration.
+
 ## Argument interpretation
 Most of the commands in this tool operate on databases, branches and
 more generically, resources. The way these are specified are uniform
