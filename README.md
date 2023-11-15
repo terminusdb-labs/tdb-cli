@@ -14,6 +14,50 @@ tdb-cli setup
 
 `tdb-cli setup` will start an interactive setup tool to create your configuration.
 
+## Features
+tdb-cli is a new tool, so it cannot yet do everything that TerminusDB can.
+
+The following subcommands are now implemented:
+- db: create and delete databases and retrieve information about them
+- branch: create, list and delete branches
+- doc: CRUD operations on documents in the database
+- log: shows the commit history
+- graphql: launch a GraphiQL instance or get the schema for a resource
+- curl: run arbitrary curl commands using the endpoint and credentials in context
+- config: utilities for querying and changing your configuration
+- setup: an interactive setup tool for your configuration
+
+## Context
+Whenever possible, tdb-cli will try to infer what you're trying to
+work with from context. This context is usually your configuration
+file (~/.tdb.yml), but also includes top-level command line options,
+and environment variables.
+
+Notably, the configuration file can have a `current_context`
+configured. If you ran `tdb-cli setup`, the last element you added
+will be the current context, and will be what is used in all
+operations.
+
+If you have more than one context configured, you can explicitely
+choose which one to use using the top-level option `-c` like so:
+
+```
+tdb-cli -c myspecialcontext doc get myorg/foo
+```
+
+You can also switch to the context you like using
+```
+tdb-cli config context switch myspecialcontext
+```
+
+After that, `myspecialcontext` will be used for all operations that
+require a context without having to explicitely specify it.
+
+To see what contexts are available to you, do
+```
+tdb-cli config context list
+```
+
 ## Argument interpretation
 Most of the commands in this tool operate on databases, branches and
 more generically, resources. The way these are specified are uniform
@@ -154,7 +198,7 @@ credentials:
     type: token
     token: ..some long token here..
   baz:
-    type: anonymous #Unnecessary but documented for completeness. See below.
+    type: anonymous
   quux:
     type: forwarded
     username: taylor
@@ -182,7 +226,7 @@ contexts:
     endpoint: myendpoint
     credentials: mycredentials
   foo-defaults:
-    endpoint: myendpint
+    endpoint: myendpoint
     credentials: mycredentials
     organization: myorg
     database: mydb
@@ -190,8 +234,10 @@ contexts:
   cms:
     endpoint: TerminusCMS
     credentials: mytokencredentials
+    # note that on TerminusCMS, team and organization tend to be the same
+    # unless you're collaborating across organizations.
     team: myteam
-    organization: myteam # note that on TerminusCMS, team and organization tend to be the same unless you're collaborating across organizations.
+    organization: myteam
 ```
 
 ### An example minimum configuration for a self-hosted instance
@@ -212,23 +258,3 @@ contexts:
     organization: admin
 current_context: local
 ```
-
-## Manual build
-
-To rebuild the CLI tool, just run
-
-```
-npm run build
-```
-
-If you previously installed from directory, this will refresh the installed binary too.
-
-## Development
-
-To continuously rebuild the CLI tool whenever changes are made to the typescript code, run
-
-```
-npm run dev
-```
-
-This will start a process which incrementally rebuilds typescript code as files get edited. If you previously installed from directory, this will keep the binary in sync with the source.
