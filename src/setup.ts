@@ -148,7 +148,7 @@ You'll find this information in the TerminusCMS dashboard.`,
     }
 
     let yamlConfig
-    if (fileAction === 'reinitialize') {
+    if (fileAction === undefined || fileAction === 'reinitialize') {
       yamlConfig = createNewConfig(config)
     } else {
       yamlConfig = appendToConfig(config)
