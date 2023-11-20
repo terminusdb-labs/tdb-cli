@@ -400,6 +400,7 @@ function validateSingleContext(
 }
 
 export interface RuntimeContext {
+  contextName?: string
   endpoint: string
   credentials: Auth
   organization?: string
@@ -440,9 +441,12 @@ export default {
 
     if (auth !== null && endpoint !== null) {
       return {
+        contextName: orig?.contextName,
         endpoint,
         credentials: auth,
         organization,
+        database: orig?.database,
+        branch: orig?.branch,
       }
     }
 
@@ -463,16 +467,22 @@ export default {
     }
     if (auth !== null && tdbServer !== undefined) {
       return {
+        contextName: orig?.contextName,
         endpoint: tdbServer,
         credentials: auth,
         organization: tdbOrganization,
+        database: orig?.database,
+        branch: orig?.branch,
       }
     }
     if (orig !== null && (auth !== null || tdbServer !== undefined)) {
       return {
+        contextName: orig?.contextName,
         endpoint: tdbServer ?? orig.endpoint,
         credentials: auth ?? orig.credentials,
         organization: tdbOrganization ?? orig.organization,
+        database: orig?.database,
+        branch: orig?.branch,
       }
     }
 
@@ -528,6 +538,7 @@ export default {
           endpoint = `${endpoint}/${context.team}`
         }
         return {
+          contextName: name,
           endpoint,
           credentials,
           organization: context.organization,

@@ -9,6 +9,7 @@ import graphql from './graphql/index.js'
 import curl from './curl.js'
 import config from './config/index.js'
 import setup from './setup.js'
+import user from './user/index.js'
 import Client from './client.js'
 import Config, { ConfigurationFileError } from './config.js'
 import { setClient, setContext } from './state.js'
@@ -58,4 +59,5 @@ program
   .addCommand(curl)
   .addCommand(config)
   .addCommand(setup)
+  .addCommand(user)
 await program.parseAsync()
