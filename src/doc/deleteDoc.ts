@@ -28,6 +28,7 @@ const command = new Command()
     false,
   )
   .option('-i, --id <id>', 'The id of the document to delete')
+  .option('-t, --type <type>', 'The type of documents to delete')
   // the server cli tool has a weird data flag too? what is that about
   .option('-n, --nuke', 'remove all documents from the graph')
   .action(
@@ -44,6 +45,9 @@ const command = new Command()
         })
       if (options.id !== undefined) {
         request = request.query({ id: options.id })
+      }
+      if (options.type !== undefined) {
+        request = request.query({ type: options.type })
       }
       if (options.nuke !== undefined) {
         request = request.query({ nuke: true })
