@@ -14,6 +14,8 @@ import Client from './client.js'
 import Config, { ConfigurationFileError } from './config.js'
 import { setClient, setContext } from './state.js'
 
+process.title = 'tdb-cli'
+
 program
   .enablePositionalOptions(true)
   .hook('preSubcommand', (command) => {
