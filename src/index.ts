@@ -10,6 +10,7 @@ import curl from './curl.js'
 import config from './config/index.js'
 import setup from './setup.js'
 import user from './user/index.js'
+import optimize from './optimize.js'
 import Client from './client.js'
 import Config, { ConfigurationFileError } from './config.js'
 import { setClient, setContext } from './state.js'
@@ -58,6 +59,7 @@ program
   .addCommand(branch)
   .addCommand(graphql)
   .addCommand(log)
+  .addCommand(optimize)
   .addCommand(curl)
   .addCommand(config)
   .addCommand(setup)

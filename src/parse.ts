@@ -277,6 +277,16 @@ export function parseResource(
       return {
         resource: `${db.resource}/local/${typ}/${branch}`,
       }
+    } else if (last.startsWith('_')) {
+      // this has to be a special resource
+      if (args.length !== 0) {
+        throw new ResourceParseError(
+          `special graph ${last} cannot be combined with an organization`,
+        )
+      }
+      return {
+        resource: last,
+      }
     } else {
       // last argument is a database name. the thing before has to be an organization
       const org = parseOrg(args, context)
