@@ -2,6 +2,7 @@ import { Command } from '@commander-js/extra-typings'
 import list from './list.js'
 import create from './create.js'
 import delete_ from './delete.js'
+import reset from './reset.js'
 
 const command = new Command()
   .name('branch')
@@ -9,5 +10,6 @@ const command = new Command()
   .addCommand(list)
   .addCommand(create)
   .addCommand(delete_)
+  .addCommand(reset)
 
 export default command

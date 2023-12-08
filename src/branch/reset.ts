@@ -1,20 +1,23 @@
 import { Command } from '@commander-js/extra-typings'
-import { getClient } from './state.js'
-import { withParsedResource } from './parse.js'
+import { getClient } from '../state.js'
+import { withParsedBranch } from '../parse.js'
 
 const command = new Command()
-  .name('optimize')
-  .description('optimize a resource')
-  .argument('[resource...]', 'the resource to optimize')
+  .name('reset')
+  .description('Reset a branch to another commit')
+  .argument('[branch...]', 'the branch to reset')
+  .requiredOption('-c, --commit <commit>', 'commit id to reset the branch to')
   .action(
-    withParsedResource(async (resource) => {
+    withParsedBranch(async (branch, options) => {
       const request = getClient()
-        .post(`api/optimize/${resource.resource}`)
+        .post(`api/reset/${branch.resource}`)
+        .type('json')
+        .send({ commit_descriptor: options.commit })
         .ok((_) => true)
 
       const response = await request
       if (response.status === 200) {
-        console.log('resource optimized.')
+        console.log('branch reset.')
       } else {
         if (typeof response.body === 'object') {
           const body = response.body as { 'api:message'?: string }
@@ -24,11 +27,10 @@ const command = new Command()
           }
         }
         // something went wrong but it didn't go wrong in a way that gives us an easy message
-        console.error(`Optimize returned status ${response.status}`)
+        console.error(`Reset returned status ${response.status}`)
         console.error(response.body)
         process.exit(1)
       }
     }),
   )
-
 export default command
